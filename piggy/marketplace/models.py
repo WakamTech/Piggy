@@ -22,14 +22,14 @@ class User(AbstractUser):
 
     groups = models.ManyToManyField(
         Group,
-        related_name='marketplace_user_set',  # Ajoutez related_name personnalisé ici
+        related_name='marketplace_user_set',
         blank=True,
         help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.',
         related_query_name='user',
     )
     user_permissions = models.ManyToManyField(
         Permission,
-        related_name='marketplace_user_set',  # Ajoutez related_name personnalisé ici
+        related_name='marketplace_user_set',
         blank=True,
         help_text='Specific permissions for this user.',
         related_query_name='user',
@@ -54,6 +54,33 @@ class Ad(models.Model):
 
     def __str__(self):
         return self.title
+
+class Location(models.Model):
+    ad = models.OneToOneField(Ad, on_delete=models.CASCADE, related_name='location')
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    address = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f"Location for {self.ad.title}"
+
+class DeliveryFee(models.Model):
+    zone_name = models.CharField(max_length=255)
+    base_fee = models.DecimalField(max_digits=10, decimal_places=2)
+    fee_per_km = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return self.zone_name
+
+class Butchery(models.Model):
+    name = models.CharField(max_length=255)
+    address = models.CharField(max_length=255)
+    phone = models.CharField(max_length=15)
+    email = models.EmailField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.name
 
 class Order(models.Model):
     STATUS_CHOICES = [
