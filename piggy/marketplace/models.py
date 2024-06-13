@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
 import random
 from django.utils import timezone
@@ -19,6 +19,21 @@ class User(AbstractUser):
 
     USERNAME_FIELD = 'phone'
     REQUIRED_FIELDS = ['username']
+
+    groups = models.ManyToManyField(
+        Group,
+        related_name='marketplace_user_set',  # Ajoutez related_name personnalisé ici
+        blank=True,
+        help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.',
+        related_query_name='user',
+    )
+    user_permissions = models.ManyToManyField(
+        Permission,
+        related_name='marketplace_user_set',  # Ajoutez related_name personnalisé ici
+        blank=True,
+        help_text='Specific permissions for this user.',
+        related_query_name='user',
+    )
 
     def __str__(self):
         return self.username
