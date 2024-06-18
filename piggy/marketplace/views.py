@@ -11,9 +11,9 @@ from twilio.rest import Client
 from .models import User, Ad, Location, DeliveryFee, Butchery, Order, Notification, Review, Cart, OTP
 from .serializers import UserSerializer, AdSerializer, LocationSerializer, DeliveryFeeSerializer, ButcherySerializer, OrderSerializer, NotificationSerializer, ReviewSerializer, CartSerializer, OTPSerializer
 
-TWILIO_ACCOUNT_SID = 'votre_account_sid'
-TWILIO_AUTH_TOKEN = 'votre_auth_token'
-TWILIO_PHONE_NUMBER = 'votre_twilio_phone_number'
+TWILIO_ACCOUNT_SID = ''
+TWILIO_AUTH_TOKEN = ''
+TWILIO_PHONE_NUMBER = ''
 
 def geocode_address(address):
     geolocator = Nominatim(user_agent="piggy_geocoder")
