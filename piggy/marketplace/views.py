@@ -1,8 +1,12 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.tokens import AccessToken
-from django.contrib.auth import authenticate
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework import generics
+from geopy.geocoders import Nominatim
 from geopy.distance import geodesic
+from django.contrib.auth import authenticate
+from twilio.rest import Client
 
 from .models import User, Ad, Location, DeliveryFee, Butchery, Order, Notification, Review, Cart, OTP
 from .serializers import UserSerializer, AdSerializer, LocationSerializer, DeliveryFeeSerializer, ButcherySerializer, OrderSerializer, NotificationSerializer, ReviewSerializer, CartSerializer, OTPSerializer
@@ -80,26 +84,83 @@ def login(request):
 def logout(request):
     return Response({"message": "Déconnexion réussie."})
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def create_ad(request):
-    serializer = AdSerializer(data=request.data)
-    if serializer.is_valid():
-        ad = serializer.save(user=request.user)
-        address = request.data.get('address')
+class AdListCreateView(generics.ListCreateAPIView):
+    queryset = Ad.objects.all()
+    serializer_class = AdSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+        address = self.request.data.get('address')
         if address:
             latitude, longitude = geocode_address(address)
             if latitude and longitude:
-                Location.objects.create(ad=ad, latitude=latitude, longitude=longitude, address=address)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                Location.objects.create(ad=serializer.instance, latitude=latitude, longitude=longitude, address=address)
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def list_ads(request):
-    ads = Ad.objects.all()
-    serializer = AdSerializer(ads, many=True)
-    return Response(serializer.data)
+class AdRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Ad.objects.all()
+    serializer_class = AdSerializer
+    permission_classes = [IsAuthenticated]
+
+class DeliveryFeeListCreateView(generics.ListCreateAPIView):
+    queryset = DeliveryFee.objects.all()
+    serializer_class = DeliveryFeeSerializer
+    permission_classes = [IsAuthenticated]
+
+class DeliveryFeeRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = DeliveryFee.objects.all()
+    serializer_class = DeliveryFeeSerializer
+    permission_classes = [IsAuthenticated]
+
+class ButcheryListCreateView(generics.ListCreateAPIView):
+    queryset = Butchery.objects.all()
+    serializer_class = ButcherySerializer
+    permission_classes = [IsAuthenticated]
+
+class ButcheryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Butchery.objects.all()
+    serializer_class = ButcherySerializer
+    permission_classes = [IsAuthenticated]
+
+class OrderListCreateView(generics.ListCreateAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+    permission_classes = [IsAuthenticated]
+
+class OrderRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+    permission_classes = [IsAuthenticated]
+
+class NotificationListCreateView(generics.ListCreateAPIView):
+    queryset = Notification.objects.all()
+    serializer_class = NotificationSerializer
+    permission_classes = [IsAuthenticated]
+
+class NotificationRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Notification.objects.all()
+    serializer_class = NotificationSerializer
+    permission_classes = [IsAuthenticated]
+
+class ReviewListCreateView(generics.ListCreateAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+    permission_classes = [IsAuthenticated]
+
+class ReviewRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+    permission_classes = [IsAuthenticated]
+
+class CartListCreateView(generics.ListCreateAPIView):
+    queryset = Cart.objects.all()
+    serializer_class = CartSerializer
+    permission_classes = [IsAuthenticated]
+
+class CartRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Cart.objects.all()
+    serializer_class = CartSerializer
+    permission_classes = [IsAuthenticated]
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
