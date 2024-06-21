@@ -11,8 +11,8 @@ from twilio.rest import Client
 from .models import User, Ad, Location, DeliveryFee, Butchery, Order, Notification, Review, Cart, OTP
 from .serializers import UserSerializer, AdSerializer, LocationSerializer, DeliveryFeeSerializer, ButcherySerializer, OrderSerializer, NotificationSerializer, ReviewSerializer, CartSerializer, OTPSerializer
 
-TWILIO_ACCOUNT_SID = ''
-TWILIO_AUTH_TOKEN = ''
+TWILIO_ACCOUNT_SID = 'ACdce9545dd178c2e81113ae81f09066fc'
+TWILIO_AUTH_TOKEN = '39e8ef7ae4f732d94cce9887bbc34dae'
 TWILIO_PHONE_NUMBER = ''
 
 def geocode_address(address):
