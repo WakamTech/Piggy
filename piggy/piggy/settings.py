@@ -76,6 +76,7 @@ REST_FRAMEWORK = {
     ),
 }
 
+
 # Configuration de Simple JWT
 SIMPLE_JWT = {
     #'ACCESS_TOKEN_LIFETIME': timedelta(days=1),

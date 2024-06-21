@@ -4,6 +4,43 @@ import random
 from django.utils import timezone
 from datetime import timedelta
 
+from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.db import models
+import random
+from django.utils import timezone
+from datetime import timedelta
+from django.contrib.auth.models import AbstractUser, BaseUserManager, Group, Permission
+from django.db import models
+import random
+from django.utils import timezone
+from datetime import timedelta
+
+from django.contrib.auth.models import AbstractUser, BaseUserManager, Group, Permission
+from django.db import models
+import random
+from django.utils import timezone
+from datetime import timedelta
+
+class CustomUserManager(BaseUserManager):
+    def create_user(self, phone, password=None, **extra_fields):
+        if not phone:
+            raise ValueError('The Phone number must be set')
+        user = self.model(phone=phone, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, phone, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+
+        return self.create_user(phone, password, **extra_fields)
+
 class User(AbstractUser):
     ROLE_CHOICES = [
         ('farmer', 'Fermier'),
@@ -18,25 +55,30 @@ class User(AbstractUser):
     notifications = models.BooleanField(default=True)
 
     USERNAME_FIELD = 'phone'
-    REQUIRED_FIELDS = ['username']
+    REQUIRED_FIELDS = []
 
     groups = models.ManyToManyField(
         Group,
-        related_name='marketplace_user_set',
+        related_name='marketplace_user_set',  # Changez le related_name pour éviter les conflits
         blank=True,
         help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.',
         related_query_name='user',
     )
     user_permissions = models.ManyToManyField(
         Permission,
-        related_name='marketplace_user_set',
+        related_name='marketplace_user_permissions_set',  # Changez le related_name pour éviter les conflits
         blank=True,
         help_text='Specific permissions for this user.',
         related_query_name='user',
     )
 
+    objects = CustomUserManager()
+
     def __str__(self):
-        return self.username
+        return self.phone
+
+
+
 
 class Ad(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

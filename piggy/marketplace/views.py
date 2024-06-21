@@ -3,6 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import generics
+from rest_framework_simplejwt.tokens import AccessToken
 from geopy.geocoders import Nominatim
 from geopy.distance import geodesic
 from django.contrib.auth import authenticate
@@ -13,7 +14,7 @@ from .serializers import UserSerializer, AdSerializer, LocationSerializer, Deliv
 
 TWILIO_ACCOUNT_SID = 'ACdce9545dd178c2e81113ae81f09066fc'
 TWILIO_AUTH_TOKEN = '39e8ef7ae4f732d94cce9887bbc34dae'
-TWILIO_PHONE_NUMBER = ''
+TWILIO_PHONE_NUMBER = '+15188643966'
 
 def geocode_address(address):
     geolocator = Nominatim(user_agent="piggy_geocoder")
@@ -23,12 +24,14 @@ def geocode_address(address):
     return None, None
 
 @api_view(['POST'])
+@permission_classes([])  # Cette ligne permet l'accès sans authentification
 def send_otp(request):
     phone = request.data.get('phone')
     if not phone:
         return Response({"error": "Numéro de téléphone requis."}, status=status.HTTP_400_BAD_REQUEST)
 
     code = OTP.generate_code()
+    print(code)
     OTP.objects.create(phone=phone, code=code)
     
     client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
@@ -41,6 +44,7 @@ def send_otp(request):
     return Response({"message": "Code OTP envoyé."})
 
 @api_view(['POST'])
+@permission_classes([])  # Cette ligne permet l'accès sans authentification
 def verify_otp(request):
     phone = request.data.get('phone')
     code = request.data.get('code')
@@ -52,6 +56,7 @@ def verify_otp(request):
     return Response({"error": "Code OTP invalide ou expiré."}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
+@permission_classes([])  # Cette ligne permet l'accès sans authentification
 def register(request):
     phone = request.data.get('phone')
     password = request.data.get('password')
@@ -69,7 +74,9 @@ def register(request):
     otp.delete()
     return Response({"message": "Inscription réussie.", "user_id": user.id})
 
+
 @api_view(['POST'])
+@permission_classes([])  # Cette ligne permet l'accès sans authentification
 def login(request):
     phone = request.data.get('phone')
     password = request.data.get('password')
