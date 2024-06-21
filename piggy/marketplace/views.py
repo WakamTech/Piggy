@@ -12,10 +12,19 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from .models import User, Ad, Location, DeliveryFee, Butchery, Order, Notification, Review, Cart, OTP
 from .serializers import UserSerializer, AdSerializer, LocationSerializer, DeliveryFeeSerializer, ButcherySerializer, OrderSerializer, NotificationSerializer, ReviewSerializer, CartSerializer, OTPSerializer
+from django.db import models 
+import logging
 
-TWILIO_ACCOUNT_SID = 'ACdce9545dd178c2e81113ae81f09066fc'
-TWILIO_AUTH_TOKEN = '39e8ef7ae4f732d94cce9887bbc34dae'
-TWILIO_PHONE_NUMBER = '+15188643966'
+logger = logging.getLogger(__name__)
+
+
+
+import os
+
+TWILIO_ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID')
+TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN')
+TWILIO_PHONE_NUMBER = os.getenv('TWILIO_PHONE_NUMBER')
+
 
 def geocode_address(address):
     geolocator = Nominatim(user_agent="piggy_geocoder")
@@ -118,6 +127,16 @@ class AdRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
     def patch(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
+    
+    def delete(self, request, *args, **kwargs):
+        print("called")
+        logger.debug("Delete method called")
+        response = super().delete(request, *args, **kwargs)
+        logger.debug("Delete operation completed with status %s", response.status_code)
+        return response
+    
+    def perform_destroy(self, instance):
+        instance.delete()
 
 class DeliveryFeeListCreateView(generics.ListCreateAPIView):
     queryset = DeliveryFee.objects.all()
@@ -204,3 +223,110 @@ def calculate_delivery_fee(request):
     total_fee = delivery_fee.base_fee + (distance_km * delivery_fee.fee_per_km)
     
     return Response({"total_fee": total_fee})
+
+
+from rest_framework import generics, permissions, status
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from .models import User, Ad, Order
+from .serializers import UserSerializer, AdSerializer, OrderSerializer
+
+# Permission classes to restrict access to admin users only
+class IsAdminUser(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.user and request.user.is_authenticated and request.user.role == 'admin'
+
+# User Management
+class UserListView(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAdminUser]
+
+    def get_queryset(self):
+        role = self.request.query_params.get('role', None)
+        if role:
+            return self.queryset.filter(role=role)
+        return self.queryset
+
+class UserUpdateView(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAdminUser]
+
+class UserDeleteView(generics.DestroyAPIView):
+    queryset = User.objects.all()
+    permission_classes = [IsAdminUser]
+
+# Ad Management
+class AdListView(generics.ListAPIView):
+    queryset = Ad.objects.all()
+    serializer_class = AdSerializer
+    permission_classes = [IsAdminUser]
+
+    def get_queryset(self):
+        status = self.request.query_params.get('status', None)
+        if status:
+            return self.queryset.filter(is_active=(status == 'active'))
+        return self.queryset
+
+class AdValidateView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def put(self, request, pk, format=None):
+        try:
+            ad = Ad.objects.get(pk=pk)
+            ad.is_active = True
+            ad.save()
+            return Response({"message": "Annonce validée avec succès."}, status=status.HTTP_200_OK)
+        except Ad.DoesNotExist:
+            return Response({"error": "Annonce non trouvée."}, status=status.HTTP_404_NOT_FOUND)
+
+class AdDeleteView(generics.DestroyAPIView):
+    queryset = Ad.objects.all()
+    permission_classes = [IsAdminUser]
+
+# Order Management
+class OrderListView(generics.ListAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+    permission_classes = [IsAdminUser]
+
+    def get_queryset(self):
+        status = self.request.query_params.get('status', None)
+        if status:
+            return self.queryset.filter(status=status)
+        return self.queryset
+
+class OrderUpdateView(generics.UpdateAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+    permission_classes = [IsAdminUser]
+
+class OrderDeleteView(generics.DestroyAPIView):
+    queryset = Order.objects.all()
+    permission_classes = [IsAdminUser]
+
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from django.db.models import Sum, F
+
+@api_view(['GET'])
+@permission_classes([IsAdminUser])
+def get_stats(request):
+    total_users = User.objects.count()
+    total_ads = Ad.objects.count()
+    total_orders = Order.objects.count()
+
+    # Calculate the total revenue based on delivered orders
+    revenue = Order.objects.filter(status='delivered').aggregate(
+        total_revenue=Sum(F('quantity') * F('ad__price_per_kg'))
+    )['total_revenue']
+
+    return Response({
+        "total_users": total_users,
+        "total_ads": total_ads,
+        "total_orders": total_orders,
+        "revenue": revenue or 0
+    })

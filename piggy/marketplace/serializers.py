@@ -23,6 +23,12 @@ class AdSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         # Ajoutez la logique ici si nécessaire pour manipuler des données lors de la création
         return super().create(validated_data)
+    
+    def update(self, instance, validated_data):
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
 
 
 

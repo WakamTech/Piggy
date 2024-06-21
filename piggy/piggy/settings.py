@@ -83,9 +83,13 @@ REST_FRAMEWORK = {
 
 # Configuration de Simple JWT
 SIMPLE_JWT = {
-    #'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=7),
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
+
+
+
+
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
