@@ -116,6 +116,9 @@ class AdRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = AdSerializer
     permission_classes = [IsAuthenticated]
 
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
 class DeliveryFeeListCreateView(generics.ListCreateAPIView):
     queryset = DeliveryFee.objects.all()
     serializer_class = DeliveryFeeSerializer

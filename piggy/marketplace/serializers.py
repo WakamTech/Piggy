@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import User, Ad, Location, DeliveryFee, Butchery, Order, Notification, Review, Cart, OTP
+from rest_framework import generics
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -12,9 +13,18 @@ class AdSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('user',)  # Rend le champ 'user' en lecture seule
 
+        extra_kwargs = {
+            'city': {'required': False},
+            'quantity': {'required': False},
+            'price_per_kg': {'required': False},
+            'weight_avg': {'required': False}
+        }
+
     def create(self, validated_data):
         # Ajoutez la logique ici si nécessaire pour manipuler des données lors de la création
         return super().create(validated_data)
+
+
 
 class LocationSerializer(serializers.ModelSerializer):
     class Meta:
