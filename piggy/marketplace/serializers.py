@@ -10,6 +10,11 @@ class AdSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ad
         fields = '__all__'
+        read_only_fields = ('user',)  # Rend le champ 'user' en lecture seule
+
+    def create(self, validated_data):
+        # Ajoutez la logique ici si nécessaire pour manipuler des données lors de la création
+        return super().create(validated_data)
 
 class LocationSerializer(serializers.ModelSerializer):
     class Meta:

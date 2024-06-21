@@ -15,17 +15,14 @@ import random
 from django.utils import timezone
 from datetime import timedelta
 
-from django.contrib.auth.models import AbstractUser, BaseUserManager, Group, Permission
-from django.db import models
-import random
-from django.utils import timezone
-from datetime import timedelta
+import uuid
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, phone, password=None, **extra_fields):
         if not phone:
             raise ValueError('The Phone number must be set')
-        user = self.model(phone=phone, **extra_fields)
+        username = str(uuid.uuid4())  # Génère un identifiant unique
+        user = self.model(phone=phone, username=username, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
@@ -59,14 +56,14 @@ class User(AbstractUser):
 
     groups = models.ManyToManyField(
         Group,
-        related_name='marketplace_user_set',  # Changez le related_name pour éviter les conflits
+        related_name='marketplace_user_set',
         blank=True,
         help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.',
         related_query_name='user',
     )
     user_permissions = models.ManyToManyField(
         Permission,
-        related_name='marketplace_user_permissions_set',  # Changez le related_name pour éviter les conflits
+        related_name='marketplace_user_permissions_set',
         blank=True,
         help_text='Specific permissions for this user.',
         related_query_name='user',
@@ -76,7 +73,6 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.phone
-
 
 
 

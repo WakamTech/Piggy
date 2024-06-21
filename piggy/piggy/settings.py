@@ -66,6 +66,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "piggy.wsgi.application"
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
+
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -93,6 +97,7 @@ DATABASES = {
     }
 }
 
+AUTH_USER_MODEL = 'marketplace.User'
 
 
 # Password validation

@@ -8,6 +8,7 @@ from geopy.geocoders import Nominatim
 from geopy.distance import geodesic
 from django.contrib.auth import authenticate
 from twilio.rest import Client
+from django.core.exceptions import ObjectDoesNotExist
 
 from .models import User, Ad, Location, DeliveryFee, Butchery, Order, Notification, Review, Cart, OTP
 from .serializers import UserSerializer, AdSerializer, LocationSerializer, DeliveryFeeSerializer, ButcherySerializer, OrderSerializer, NotificationSerializer, ReviewSerializer, CartSerializer, OTPSerializer
@@ -35,11 +36,14 @@ def send_otp(request):
     OTP.objects.create(phone=phone, code=code)
     
     client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
-    client.messages.create(
-        body=f'Votre code OTP est {code}',
-        from_=TWILIO_PHONE_NUMBER,
-        to=phone
-    )
+    try:
+        client.messages.create(
+            body=f'Votre code OTP est {code}',
+            from_=TWILIO_PHONE_NUMBER,
+            to=phone
+        )
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     return Response({"message": "Code OTP envoyé."})
 
@@ -80,10 +84,13 @@ def register(request):
 def login(request):
     phone = request.data.get('phone')
     password = request.data.get('password')
-    user = authenticate(phone=phone, password=password)
+    print(f"Phone: {phone}, Password: {password}")  # Debug: Affiche les informations d'identification reçues
+    user = authenticate(request, username=phone, password=password)  # Utilise `username` ici
     if user is not None:
         token = AccessToken.for_user(user)
+        print(f"Login successful for user: {user}")  # Debug: Affiche un message de succès
         return Response({"token": str(token)})
+    print("Authentication failed")  # Debug: Affiche un message d'échec
     return Response({"error": "Informations d'identification incorrectes."}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
@@ -172,7 +179,11 @@ class CartRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def calculate_delivery_fee(request):
-    user_location = Location.objects.get(user=request.user)
+    try:
+        user_location = Location.objects.get(user=request.user)
+    except ObjectDoesNotExist:
+        return Response({"error": "User location not found"}, status=status.HTTP_400_BAD_REQUEST)
+    
     destination_latitude = request.data.get('destination_latitude')
     destination_longitude = request.data.get('destination_longitude')
     
@@ -184,6 +195,9 @@ def calculate_delivery_fee(request):
     distance_km = geodesic(user_coords, destination_coords).kilometers
     
     delivery_fee = DeliveryFee.objects.first()
+    if not delivery_fee:
+        return Response({"error": "Delivery fee not found"}, status=status.HTTP_400_BAD_REQUEST)
+
     total_fee = delivery_fee.base_fee + (distance_km * delivery_fee.fee_per_km)
     
     return Response({"total_fee": total_fee})
