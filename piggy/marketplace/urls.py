@@ -4,7 +4,7 @@ from .views import (
     UserListView, UserUpdateView, UserDeleteView, 
     AdListView, AdValidateView, AdDeleteView, 
     OrderListView, OrderUpdateView, OrderDeleteView,
-    get_stats
+    get_stats, get_configs
 )
 
 urlpatterns = [
@@ -38,4 +38,5 @@ urlpatterns = [
     path('admin/orders/<int:pk>/', OrderUpdateView.as_view(), name='order-update'),
     path('admin/orders/<int:pk>/delete/', OrderDeleteView.as_view(), name='order-delete'),
     path('admin/stats/', get_stats, name='get-stats'),
+    path('api/configs/', get_configs, name='get_configs'),
 ]

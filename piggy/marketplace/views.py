@@ -9,7 +9,7 @@ from geopy.distance import geodesic
 from django.contrib.auth import authenticate
 from twilio.rest import Client
 from django.core.exceptions import ObjectDoesNotExist
-
+from .models import Config
 from .models import User, Ad, Location, DeliveryFee, Butchery, Order, Notification, Review, Cart, OTP
 from .serializers import UserSerializer, AdSerializer, LocationSerializer, DeliveryFeeSerializer, ButcherySerializer, OrderSerializer, NotificationSerializer, ReviewSerializer, CartSerializer, OTPSerializer
 from django.db import models 
@@ -17,6 +17,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+from .serializers import ConfigSerializer
 
 
 import os
@@ -24,6 +25,15 @@ import os
 TWILIO_ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID')
 TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN')
 TWILIO_PHONE_NUMBER = os.getenv('TWILIO_PHONE_NUMBER')
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_configs(request):
+    keys = ['google_analytics_id', 'cloudinary_cloud_name', 'cloudinary_api_key', 'cloudinary_api_secret']
+    configs = Config.objects.filter(key__in=keys)
+    serializer = ConfigSerializer(configs, many=True)
+    return Response(serializer.data)
 
 
 def geocode_address(address):

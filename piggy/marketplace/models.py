@@ -3,17 +3,17 @@ from django.db import models
 import random
 from django.utils import timezone
 from datetime import timedelta
-
 from django.contrib.auth.models import AbstractUser, BaseUserManager
-from django.db import models
 import random
 from django.utils import timezone
 from datetime import timedelta
 from django.contrib.auth.models import AbstractUser, BaseUserManager, Group, Permission
-from django.db import models
+
 import random
 from django.utils import timezone
 from datetime import timedelta
+
+
 
 import uuid
 
@@ -73,8 +73,6 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.phone
-
-
 
 class Ad(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -179,3 +177,10 @@ class OTP(models.Model):
     @staticmethod
     def generate_code():
         return str(random.randint(100000, 999999))
+
+class Config(models.Model):
+    key = models.CharField(max_length=255, unique=True)
+    value = models.TextField()
+
+    def __str__(self):
+        return self.key

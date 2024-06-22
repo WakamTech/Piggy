@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from .models import User, Ad, Location, DeliveryFee, Butchery, Order, Notification, Review, Cart, OTP
 from rest_framework import generics
+from rest_framework import serializers
+from .models import Config
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -71,3 +73,8 @@ class OTPSerializer(serializers.ModelSerializer):
     class Meta:
         model = OTP
         fields = '__all__'
+
+class ConfigSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Config
+        fields = ['key', 'value']
