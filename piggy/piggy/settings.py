@@ -53,6 +53,8 @@ CORS_ALLOW_METHODS = [
     'OPTIONS'
 ]
 
+CORS_ALLOW_ALL_ORIGINS = True  
+
 ROOT_URLCONF = "piggy.urls"
 
 TEMPLATES = [
