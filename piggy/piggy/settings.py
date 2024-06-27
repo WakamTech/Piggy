@@ -38,6 +38,12 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
 ]
 
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',  # Add your frontend URL here
+    'http://localhost:59050',  # The one mentioned in your error log
+    # Add other URLs if necessary
+]
+
 CORS_ALLOW_METHODS = [
     'GET',
     'POST',
