@@ -54,15 +54,15 @@ def send_otp(request):
     print(code)
     OTP.objects.create(phone=phone, code=code)
     
-    client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
-    try:
-        client.messages.create(
-            body=f'Votre code OTP est {code}',
-            from_=TWILIO_PHONE_NUMBER,
-            to=phone
-        )
-    except Exception as e:
-        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    #client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+    #try:
+        #client.messages.create(
+            #body=f'Votre code OTP est {code}',
+            #from_=TWILIO_PHONE_NUMBER,
+            #to=phone
+        #)
+    #except Exception as e:
+        #return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     return Response({"message": "Code OTP envoyé."})
 
