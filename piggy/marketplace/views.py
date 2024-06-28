@@ -86,6 +86,9 @@ def register(request):
     role = request.data.get('role', 'buyer')
     code = request.data.get('code')
 
+    print(phone)
+    print(code)
+
     otp = OTP.objects.filter(phone=phone, code=code).first()
     if not otp or not otp.is_valid():
         return Response({"error": "Code OTP invalide ou expiré."}, status=status.HTTP_400_BAD_REQUEST)
