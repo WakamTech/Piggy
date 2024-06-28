@@ -98,8 +98,9 @@ def register(request):
 
     user = User.objects.create_user(phone=phone, password=password, role=role)
     otp.delete()
+    user_serializer = UserSerializer(user)
 
-    return Response({"message": "Inscription réussie.", "user": user})
+    return Response({"message": "Inscription réussie.", "user": user_serializer.data})
 
 
 @api_view(['POST'])
