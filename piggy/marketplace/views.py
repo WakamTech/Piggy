@@ -99,7 +99,7 @@ def register(request):
     user = User.objects.create_user(phone=phone, password=password, role=role)
     otp.delete()
     user_serializer = UserSerializer(user)
-
+    print(user_serializer.data)
     return Response({"message": "Inscription réussie.", "user": user_serializer.data})
 
 
