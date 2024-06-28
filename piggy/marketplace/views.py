@@ -98,8 +98,8 @@ def register(request):
 
     user = User.objects.create_user(phone=phone, password=password, role=role)
     otp.delete()
-    print(user)
-    return Response({"message": "Inscription réussie.", "user_id": user.id})
+
+    return Response({"message": "Inscription réussie.", "user": user)
 
 
 @api_view(['POST'])
