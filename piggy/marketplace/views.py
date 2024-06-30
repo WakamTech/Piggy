@@ -268,10 +268,16 @@ class UserListView(generics.ListAPIView):
             return self.queryset.filter(role=role)
         return self.queryset
 
+class IsOwnerOrAdmin(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        # L'autorisation est accordée à l'admin ou si l'utilisateur est le propriétaire de l'objet.
+        return obj == request.user or request.user.role == 'admin'
+
 class UserUpdateView(generics.UpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsOwnerOrAdmin]
+
 
 class UserDeleteView(generics.DestroyAPIView):
     queryset = User.objects.all()
