@@ -132,6 +132,13 @@ class UserAdsListView(generics.ListAPIView):
     def get_queryset(self):
         user_id = self.kwargs['user_id']
         return Ad.objects.filter(user__id=user_id)
+        
+class UserOrdersListView(generics.ListAPIView):
+    serializer_class = OrderSerializer
+
+    def get_queryset(self):
+        user_id = self.kwargs['user_id']
+        return Order.objects.filter(user__id=user_id)
 
 class AdListCreateView(generics.ListCreateAPIView):
     queryset = Ad.objects.all()
