@@ -188,11 +188,11 @@ class ButcheryListCreateView(generics.ListCreateAPIView):
 
 class ButcheryAdsListView(generics.ListAPIView):
     serializer_class = AdSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return Ad.objects.filter(user__role='butcher')
-        
+
 class ButcheryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Butchery.objects.all()
     serializer_class = ButcherySerializer
