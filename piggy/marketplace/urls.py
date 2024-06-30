@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 from .views import (
-    UserListView, UserUpdateView, UserDeleteView, 
+    UserListView, UserUpdateView, UserRetrieveView, UserDeleteView, 
     AdListView, AdValidateView, AdDeleteView, 
     OrderListView, OrderUpdateView, OrderDeleteView,
     get_stats, get_configs
@@ -13,6 +13,8 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('login/', views.login, name='login'),
     path('logout/', views.logout, name='logout'),
+    path('users/<int:pk>/', UserRetrieveView.as_view(), name='user-retrieve'),
+    path('users/update/<int:pk>/', UserUpdateView.as_view(), name='user-update'),
     path('ads/', views.AdListCreateView.as_view(), name='ad_list_create'),
     path('ads/<int:pk>/', views.AdRetrieveUpdateDestroyView.as_view(), name='ad_detail'),
     path('delivery_fees/', views.DeliveryFeeListCreateView.as_view(), name='delivery_fee_list_create'),

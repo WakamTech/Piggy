@@ -122,6 +122,10 @@ def login(request):
 def logout(request):
     return Response({"message": "Déconnexion réussie."})
 
+class UserRetrieveView(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
 class AdListCreateView(generics.ListCreateAPIView):
     queryset = Ad.objects.all()
     serializer_class = AdSerializer
