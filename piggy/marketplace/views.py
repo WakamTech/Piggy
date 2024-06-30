@@ -132,7 +132,7 @@ class UserAdsListView(generics.ListAPIView):
     def get_queryset(self):
         user_id = self.kwargs['user_id']
         return Ad.objects.filter(user__id=user_id)
-        
+
 class UserOrdersListView(generics.ListAPIView):
     serializer_class = OrderSerializer
 
@@ -186,6 +186,13 @@ class ButcheryListCreateView(generics.ListCreateAPIView):
     serializer_class = ButcherySerializer
     permission_classes = [IsAuthenticated]
 
+class ButcheryAdsListView(generics.ListAPIView):
+    serializer_class = AdSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Ad.objects.filter(user__role='butcher')
+        
 class ButcheryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Butchery.objects.all()
     serializer_class = ButcherySerializer
