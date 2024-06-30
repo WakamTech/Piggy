@@ -126,6 +126,13 @@ class UserRetrieveView(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+class UserAdsListView(generics.ListAPIView):
+    serializer_class = AdSerializer
+
+    def get_queryset(self):
+        user_id = self.kwargs['user_id']
+        return Ad.objects.filter(user__id=user_id)
+
 class AdListCreateView(generics.ListCreateAPIView):
     queryset = Ad.objects.all()
     serializer_class = AdSerializer
