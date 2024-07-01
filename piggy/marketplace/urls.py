@@ -46,4 +46,5 @@ urlpatterns = [
     path('admin/orders/<int:pk>/delete/', OrderDeleteView.as_view(), name='order-delete'),
     path('admin/stats/', get_stats, name='get-stats'),
     path('api/configs/', get_configs, name='get_configs'),
+    path('get_user_id/', views.get_user_id, name='get_user_id'),
 ]

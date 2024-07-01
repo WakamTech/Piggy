@@ -122,6 +122,13 @@ def login(request):
 def logout(request):
     return Response({"message": "Déconnexion réussie."})
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_id(request):
+    user_id = request.user.id
+    return Response({"user_id": user_id})
+
+
 class UserRetrieveView(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
