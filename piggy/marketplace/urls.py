@@ -47,5 +47,5 @@ urlpatterns = [
     path('admin/stats/', get_stats, name='get-stats'),
     path('api/configs/', get_configs, name='get_configs'),
     path('get_user_id/', views.get_user_id, name='get_user_id'),
-    path('add_to_cart', views.add_to_cart, name='add_to_cart'),
+    path('add_to_cart/', views.add_to_cart, name='add_to_cart'),
 ]
