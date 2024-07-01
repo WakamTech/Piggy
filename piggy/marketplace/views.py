@@ -265,6 +265,26 @@ class CartRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
+def add_to_cart(request):
+    user = request.user
+    ad_id = request.data.get('ad_id')
+    quantity = request.data.get('quantity', 1)
+
+    try:
+        ad = Ad.objects.get(id=ad_id)
+    except Ad.DoesNotExist:
+        return Response({"error": "Ad not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    cart, created = Cart.objects.get_or_create(user=user)
+
+    # Add item to cart
+    cart.items.append({"ad_id": ad_id, "quantity": quantity})
+    cart.save()
+
+    return Response({"message": "Item added to cart"}, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def calculate_delivery_fee(request):
     try:
         user_location = Location.objects.get(user=request.user)
