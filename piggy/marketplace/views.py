@@ -283,6 +283,7 @@ def add_to_cart(request):
 
     return Response({"message": "Item added to cart"}, status=status.HTTP_200_OK)
 
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def calculate_delivery_fee(request):
