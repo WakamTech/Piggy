@@ -198,6 +198,24 @@ class ButcheryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ButcherySerializer
     permission_classes = [IsAuthenticated]
 
+class UserOrderListView(generics.ListCreateAPIView):
+    serializer_class = OrderSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Récupère les commandes de l'utilisateur authentifié uniquement
+        user = self.request.user
+        return Order.objects.filter(user=user)
+
+class UserOrderDetailView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = OrderSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Récupère les commandes de l'utilisateur authentifié uniquement
+        user = self.request.user
+        return Order.objects.filter(user=user)
+
 class OrderListCreateView(generics.ListCreateAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
