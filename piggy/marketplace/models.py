@@ -165,6 +165,25 @@ class Cart(models.Model):
 
     def __str__(self):
         return f"Cart for {self.user.username}"
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def add_to_cart(request):
+    user = request.user
+    ad_id = request.data.get('ad_id')
+    quantity = request.data.get('quantity', 1)
+
+    try:
+        ad = Ad.objects.get(id=ad_id)
+    except Ad.DoesNotExist:
+        return Response({"error": "Ad not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    cart, created = Cart.objects.get_or_create(user=user)
+
+    # Add item to cart
+    cart.items.append({"ad_id": ad_id, "quantity": quantity})
+    cart.save()
+
+    return Response({"message": "Item added to cart"}, status=status.HTTP_200_OK)
 
 class OTP(models.Model):
     phone = models.CharField(max_length=15)
