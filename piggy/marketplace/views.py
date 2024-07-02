@@ -50,7 +50,7 @@ def send_otp(request):
     if not phone:
         return Response({"error": "Numéro de téléphone requis."}, status=status.HTTP_400_BAD_REQUEST)
 
-    code = OTP.generate_code()
+    code = 123456 # OTP.generate_code()
     print(code)
     OTP.objects.create(phone=phone, code=code)
     
