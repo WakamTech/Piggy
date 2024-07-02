@@ -4,7 +4,7 @@ from .views import (
     UserListView, UserUpdateView, UserRetrieveView, UserDeleteView, UserAdsListView,  UserOrdersListView, 
     AdListView, AdValidateView, AdDeleteView, ButcheryAdsListView,UserOrderListView, UserOrderDetailView, 
     OrderListView, OrderUpdateView, OrderDeleteView,
-    get_stats, get_configs, add_to_cart
+    get_stats, get_configs, add_to_cart, get_user_cart
 )
 
 urlpatterns = [
@@ -48,4 +48,5 @@ urlpatterns = [
     path('api/configs/', get_configs, name='get_configs'),
     path('get_user_id/', views.get_user_id, name='get_user_id'),
     path('add_to_cart/', add_to_cart, name='add_to_cart'),
+    path('get_user_cart/', get_user_cart, name='get_user_cart'),
 ]
