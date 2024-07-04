@@ -4,7 +4,7 @@ from .views import (
     UserListView, UserUpdateView, UserRetrieveView, UserDeleteView, UserAdsListView,  UserOrdersListView, 
     AdListView, AdValidateView, AdDeleteView, ButcheryAdsListView,UserOrderListView, UserOrderDetailView, 
     OrderListView, OrderUpdateView, OrderDeleteView, UserNotificationsView, 
-    get_stats, get_configs, add_to_cart, get_user_cart
+    get_stats, get_configs, add_to_cart, get_user_cart, CurrentUserView
 )
 
 urlpatterns = [
