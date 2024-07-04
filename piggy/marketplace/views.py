@@ -128,6 +128,12 @@ def get_user_id(request):
     user_id = request.user.id
     return Response({"user_id": user_id})
 
+class CurrentUserView(generics.RetrieveUpdateAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
 
 class UserRetrieveView(generics.RetrieveAPIView):
     queryset = User.objects.all()
