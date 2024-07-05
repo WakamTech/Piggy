@@ -51,4 +51,5 @@ urlpatterns = [
     path('add_to_cart/', add_to_cart, name='add_to_cart'),
     path('get_user_cart/', get_user_cart, name='get_user_cart'),
     path('user/notifications/', UserNotificationsView.as_view(), name='user-notifications'),
+    path('empty_cart/', views.empty_cart, name='empty_cart'),
 ]

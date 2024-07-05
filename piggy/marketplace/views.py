@@ -306,6 +306,18 @@ def add_to_cart(request):
 
     return Response({"message": "Item added to cart"}, status=status.HTTP_200_OK)
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def empty_cart(request):
+    user = request.user
+
+    try:
+        cart = Cart.objects.get(user=user)
+        cart.items.clear()  # Clear all items in the cart
+        cart.save()
+        return Response({"message": "Cart emptied successfully"}, status=status.HTTP_200_OK)
+    except Cart.DoesNotExist:
+        return Response({"error": "Cart not found"}, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
