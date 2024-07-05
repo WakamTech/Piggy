@@ -460,20 +460,27 @@ def get_stats(request):
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from django.db.models import F
-from geopy.distance import distance as geopy_distance
 from .models import Ad
+from geopy.geocoders import Nominatim
+from geopy.distance import distance as geopy_distance
+
+geolocator = Nominatim(user_agent="piggy_geocoder")
 
 @api_view(['GET'])
 def get_nearby_farmers_ads(request):
     latitude = float(request.query_params.get('latitude'))
     longitude = float(request.query_params.get('longitude'))
-    ads = Ad.objects.filter(user__role='farmer')
+
+    # Trouver la ville à partir des coordonnées
+    location = geolocator.reverse((latitude, longitude))
+    city = location.raw['address']['city']
+
+    ads = Ad.objects.filter(user__role='farmer', city=city)
 
     ads_with_distance = [
         {
             'ad': ad,
-            'distance': geopy_distance((latitude, longitude), (ad.user.latitude, ad.user.longitude)).km
+            'distance': geopy_distance((latitude, longitude), (ad.latitude, ad.longitude)).km
         }
         for ad in ads
     ]
@@ -486,12 +493,17 @@ def get_nearby_farmers_ads(request):
 def get_nearby_buyers_ads(request):
     latitude = float(request.query_params.get('latitude'))
     longitude = float(request.query_params.get('longitude'))
-    ads = Ad.objects.filter(user__role='buyer')
+
+    # Trouver la ville à partir des coordonnées
+    location = geolocator.reverse((latitude, longitude))
+    city = location.raw['address']['city']
+
+    ads = Ad.objects.filter(user__role='buyer', city=city)
 
     ads_with_distance = [
         {
             'ad': ad,
-            'distance': geopy_distance((latitude, longitude), (ad.user.latitude, ad.user.longitude)).km
+            'distance': geopy_distance((latitude, longitude), (ad.latitude, ad.longitude)).km
         }
         for ad in ads
     ]
