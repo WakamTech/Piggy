@@ -457,3 +457,45 @@ def get_stats(request):
         "total_orders": total_orders,
         "revenue": revenue or 0
     })
+
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from django.db.models import F
+from geopy.distance import distance as geopy_distance
+from .models import Ad
+
+@api_view(['GET'])
+def get_nearby_farmers_ads(request):
+    latitude = float(request.query_params.get('latitude'))
+    longitude = float(request.query_params.get('longitude'))
+    ads = Ad.objects.filter(user__role='farmer')
+
+    ads_with_distance = [
+        {
+            'ad': ad,
+            'distance': geopy_distance((latitude, longitude), (ad.user.latitude, ad.user.longitude)).km
+        }
+        for ad in ads
+    ]
+
+    ads_with_distance.sort(key=lambda x: x['distance'])
+
+    return Response([ad['ad'] for ad in ads_with_distance[:4]])
+
+@api_view(['GET'])
+def get_nearby_buyers_ads(request):
+    latitude = float(request.query_params.get('latitude'))
+    longitude = float(request.query_params.get('longitude'))
+    ads = Ad.objects.filter(user__role='buyer')
+
+    ads_with_distance = [
+        {
+            'ad': ad,
+            'distance': geopy_distance((latitude, longitude), (ad.user.latitude, ad.user.longitude)).km
+        }
+        for ad in ads
+    ]
+
+    ads_with_distance.sort(key=lambda x: x['distance'])
+
+    return Response([ad['ad'] for ad in ads_with_distance[:4]])
