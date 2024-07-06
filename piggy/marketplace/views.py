@@ -467,47 +467,14 @@ from geopy.distance import distance as geopy_distance
 geolocator = Nominatim(user_agent="piggy_geocoder")
 
 @api_view(['GET'])
+@permission_classes([IsAdminUser])
 def get_nearby_farmers_ads(request):
-    latitude = float(request.query_params.get('latitude'))
-    longitude = float(request.query_params.get('longitude'))
+    ads = Ad.objects.filter(user__role='farmer')
 
-    # Trouver la ville à partir des coordonnées
-    location = geolocator.reverse((latitude, longitude))
-    city = location.raw['address']['city']
-
-    ads = Ad.objects.filter(user__role='farmer', city=city)
-
-    ads_with_distance = [
-        {
-            'ad': ad,
-            'distance': geopy_distance((latitude, longitude), (ad.latitude, ad.longitude)).km
-        }
-        for ad in ads
-    ]
-
-    ads_with_distance.sort(key=lambda x: x['distance'])
-
-    return Response([ad['ad'] for ad in ads_with_distance[:4]])
+    return Response(ads)
 
 @api_view(['GET'])
+@permission_classes([IsAdminUser])
 def get_nearby_buyers_ads(request):
-    latitude = float(request.query_params.get('latitude'))
-    longitude = float(request.query_params.get('longitude'))
-
-    # Trouver la ville à partir des coordonnées
-    location = geolocator.reverse((latitude, longitude))
-    city = location.raw['address']['city']
-
-    ads = Ad.objects.filter(user__role='buyer', city=city)
-
-    ads_with_distance = [
-        {
-            'ad': ad,
-            'distance': geopy_distance((latitude, longitude), (ad.latitude, ad.longitude)).km
-        }
-        for ad in ads
-    ]
-
-    ads_with_distance.sort(key=lambda x: x['distance'])
-
-    return Response([ad['ad'] for ad in ads_with_distance[:4]])
+    ads = Ad.objects.filter(user__role='buyer')
+    return Response(ads)
