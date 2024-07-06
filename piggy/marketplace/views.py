@@ -467,14 +467,14 @@ from geopy.distance import distance as geopy_distance
 geolocator = Nominatim(user_agent="piggy_geocoder")
 
 @api_view(['GET'])
-@permission_classes([IsAdminUser])
+@permission_classes([IsAuthenticated])
 def get_nearby_farmers_ads(request):
     ads = Ad.objects.filter(user__role='farmer')
 
     return Response(ads)
 
 @api_view(['GET'])
-@permission_classes([IsAdminUser])
+@permission_classes([IsAuthenticated])
 def get_nearby_buyers_ads(request):
     ads = Ad.objects.filter(user__role='buyer')
     return Response(ads)
