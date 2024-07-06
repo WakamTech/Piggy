@@ -471,10 +471,12 @@ geolocator = Nominatim(user_agent="piggy_geocoder")
 def get_nearby_farmers_ads(request):
     ads = Ad.objects.filter(user__role='farmer')
 
-    return Response(ads)
+    serializer = AdSerializer(ads, many=True)
+    return Response(serializer.data)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_nearby_buyers_ads(request):
     ads = Ad.objects.filter(user__role='buyer')
-    return Response(ads)
+    serializer = AdSerializer(ads, many=True)
+    return Response(serializer.data)
