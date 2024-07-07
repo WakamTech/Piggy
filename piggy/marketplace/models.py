@@ -39,6 +39,7 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(phone, password, **extra_fields)
 
 class User(AbstractUser):
+    
     ROLE_CHOICES = [
         ('farmer', 'Fermier'),
         ('buyer', 'Acheteur'),
@@ -49,6 +50,7 @@ class User(AbstractUser):
     phone = models.CharField(max_length=15, unique=True)
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
     address = models.CharField(max_length=255, blank=True, null=True)
+    full_name = models.CharField(max_length=255, blank=True, null=True)
     notifications = models.BooleanField(default=True)
 
     USERNAME_FIELD = 'phone'
@@ -75,6 +77,11 @@ class User(AbstractUser):
         return self.phone
 
 class Ad(models.Model):
+    TYPE_CHOICES = [
+        ('farmer', 'Fermier'),
+        ('buyer', 'Acheteur'),
+        ('butcher', 'Boucherie'),
+    ]
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     city = models.CharField(max_length=255)
@@ -87,6 +94,8 @@ class Ad(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
+    type = models.CharField(max_length=10, choices=TYPE_CHOICES, default='farmer')
+
 
     def __str__(self):
         return self.title

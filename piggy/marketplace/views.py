@@ -204,7 +204,7 @@ class ButcheryAdsListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Ad.objects.filter(user__role='butcher')
+        return Ad.objects.filter(type='butcher')
 
 class ButcheryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Butchery.objects.all()
@@ -469,7 +469,7 @@ geolocator = Nominatim(user_agent="piggy_geocoder")
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_nearby_farmers_ads(request):
-    ads = Ad.objects.filter(user__role='farmer')
+    ads = Ad.objects.filter(type='farmer')
 
     serializer = AdSerializer(ads, many=True)
     return Response(serializer.data)
@@ -477,6 +477,6 @@ def get_nearby_farmers_ads(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_nearby_buyers_ads(request):
-    ads = Ad.objects.filter(user__role='buyer')
+    ads = Ad.objects.filter(type='buyer')
     serializer = AdSerializer(ads, many=True)
     return Response(serializer.data)
