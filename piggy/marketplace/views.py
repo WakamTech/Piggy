@@ -90,7 +90,7 @@ def verify_otp(request):
 def register(request):
     phone = request.data.get('phone')
     password = request.data.get('password')
-    full_name = request.data.get('password')
+    full_name = request.data.get('full_name')
     role = request.data.get('role', 'buyer')
     #code = request.data.get('code')
 
