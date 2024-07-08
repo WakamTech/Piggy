@@ -31,20 +31,7 @@ import os
 import firebase_admin
 from firebase_admin import credentials, auth
 
-cred = credentials.Certificate({
-    "type": "service_account",
-    "project_id": os.environ['FIREBASE_PROJECT_ID'],
-    "private_key_id": os.environ['FIREBASE_PRIVATE_KEY_ID'],
-    "private_key": os.environ['FIREBASE_PRIVATE_KEY'].replace('\\n', '\n'), # Important pour les clés multilignes
-    "client_email": os.environ['FIREBASE_CLIENT_EMAIL'],
-    "client_id": os.environ['FIREBASE_CLIENT_ID'],
-    "auth_uri": os.environ['FIREBASE_AUTH_URI'],
-    "token_uri": os.environ['FIREBASE_TOKEN_URI'],
-    "auth_provider_x509_cert_url": os.environ['FIREBASE_AUTH_PROVIDER_X509_CERT_URL'],
-    "client_x509_cert_url": os.environ['FIREBASE_CLIENT_X509_CERT_URL']
-})
 
-firebase_admin.initialize_app(cred)
 
 
 @api_view(['GET'])
@@ -77,7 +64,7 @@ def send_otp(request):
     try:
         # Envoyer le code OTP via Firebase
         # verification = auth.create_session_cookie(phone, {'code': code})
-        send_sms_verification_code(phone) #pour un SMS direct
+        #send_sms_verification_code(phone) #pour un SMS direct
 
         # Enregistrer le code OTP et le numéro de téléphone dans votre modèle OTP
         OTP.objects.create(phone=phone, code=code)
@@ -103,21 +90,20 @@ def verify_otp(request):
 def register(request):
     phone = request.data.get('phone')
     password = request.data.get('password')
+    full_name = request.data.get('password')
     role = request.data.get('role', 'buyer')
-    code = request.data.get('code')
+    #code = request.data.get('code')
 
-    print(phone)
-    print(code)
 
-    otp = OTP.objects.filter(phone=phone, code=code).first()
-    if not otp or not otp.is_valid():
-        return Response({"error": "Code OTP invalide ou expiré."}, status=status.HTTP_400_BAD_REQUEST)
+    #otp = OTP.objects.filter(phone=phone, code=code).first()
+    #if not otp or not otp.is_valid():
+        #return Response({"error": "Code OTP invalide ou expiré."}, status=status.HTTP_400_BAD_REQUEST)
 
     if User.objects.filter(phone=phone).exists():
         return Response({"error": "Numéro de téléphone déjà utilisé."}, status=status.HTTP_400_BAD_REQUEST)
 
-    user = User.objects.create_user(phone=phone, password=password, role=role)
-    otp.delete()
+    user = User.objects.create_user(phone=phone, password=password, role=role, full_name=full_name)
+    #otp.delete()
     user_serializer = UserSerializer(user)
     print(user_serializer.data)
     return Response({"message": "Inscription réussie.", "user": user_serializer.data})
