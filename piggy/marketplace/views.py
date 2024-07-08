@@ -152,7 +152,6 @@ def save_fcm_token(request):
 class CurrentUserView(generics.RetrieveUpdateAPIView):
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
-    print("Données reçues:", request.data) # Affichez les données reçues
 
     def get_object(self):
         return self.request.user
