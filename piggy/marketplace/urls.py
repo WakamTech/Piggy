@@ -3,7 +3,7 @@ from . import views
 from .views import (
     UserListView, UserUpdateView, UserRetrieveView, UserDeleteView, UserAdsListView,  UserOrdersListView, 
     AdListView, AdValidateView, AdDeleteView, ButcheryAdsListView,UserOrderListView, UserOrderDetailView, 
-    OrderListView, OrderUpdateView, OrderDeleteView, UserNotificationsView, 
+    OrderListView, OrderUpdateView, OrderDeleteView, UserNotificationsView, save_fcm_token,
     get_stats, get_configs, add_to_cart, get_user_cart, CurrentUserView, get_nearby_farmers_ads, get_nearby_buyers_ads
 )
 
@@ -55,5 +55,6 @@ urlpatterns = [
     # autres routes
     path('ads/nearby_farmers/', get_nearby_farmers_ads, name='nearby_farmers_ads'),
     path('ads/nearby_buyers/', get_nearby_buyers_ads, name='nearby_buyers_ads'),
+    path('save_fcm_token/', save_fcm_token, name='save_fcm_token'),
 
 ]

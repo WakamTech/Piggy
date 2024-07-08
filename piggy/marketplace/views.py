@@ -27,6 +27,26 @@ TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN')
 TWILIO_PHONE_NUMBER = os.getenv('TWILIO_PHONE_NUMBER')
 
 
+import os
+import firebase_admin
+from firebase_admin import credentials, auth
+
+cred = credentials.Certificate({
+    "type": "service_account",
+    "project_id": os.environ['FIREBASE_PROJECT_ID'],
+    "private_key_id": os.environ['FIREBASE_PRIVATE_KEY_ID'],
+    "private_key": os.environ['FIREBASE_PRIVATE_KEY'].replace('\\n', '\n'), # Important pour les clés multilignes
+    "client_email": os.environ['FIREBASE_CLIENT_EMAIL'],
+    "client_id": os.environ['FIREBASE_CLIENT_ID'],
+    "auth_uri": os.environ['FIREBASE_AUTH_URI'],
+    "token_uri": os.environ['FIREBASE_TOKEN_URI'],
+    "auth_provider_x509_cert_url": os.environ['FIREBASE_AUTH_PROVIDER_X509_CERT_URL'],
+    "client_x509_cert_url": os.environ['FIREBASE_CLIENT_X509_CERT_URL']
+})
+
+firebase_admin.initialize_app(cred)
+
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_configs(request):
@@ -50,21 +70,21 @@ def send_otp(request):
     if not phone:
         return Response({"error": "Numéro de téléphone requis."}, status=status.HTTP_400_BAD_REQUEST)
 
-    code = 123456 # OTP.generate_code()
+    # Générer un code OTP à 6 chiffres
+    code = str(random.randint(100000, 999999)) 
     print(code)
-    OTP.objects.create(phone=phone, code=code)
-    
-    #client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
-    #try:
-        #client.messages.create(
-            #body=f'Votre code OTP est {code}',
-            #from_=TWILIO_PHONE_NUMBER,
-            #to=phone
-        #)
-    #except Exception as e:
-        #return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    return Response({"message": "Code OTP envoyé."})
+    try:
+        # Envoyer le code OTP via Firebase
+        # verification = auth.create_session_cookie(phone, {'code': code})
+        send_sms_verification_code(phone) #pour un SMS direct
+
+        # Enregistrer le code OTP et le numéro de téléphone dans votre modèle OTP
+        OTP.objects.create(phone=phone, code=code)
+        
+        return Response({"message": "Code OTP envoyé.", "verificationId": verification}, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 @permission_classes([])  # Cette ligne permet l'accès sans authentification
@@ -127,6 +147,21 @@ def logout(request):
 def get_user_id(request):
     user_id = request.user.id
     return Response({"user_id": user_id})
+
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import status
+from .serializers import FCMTokenSerializer 
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def save_fcm_token(request):
+    serializer = FCMTokenSerializer(instance=request.user, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({'message': 'FCM token saved successfully'}, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class CurrentUserView(generics.RetrieveUpdateAPIView):
     serializer_class = UserSerializer
