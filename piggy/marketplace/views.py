@@ -152,9 +152,20 @@ def save_fcm_token(request):
 class CurrentUserView(generics.RetrieveUpdateAPIView):
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
+    print("Données reçues:", request.data) # Affichez les données reçues
 
     def get_object(self):
         return self.request.user
+    def put(self, request, *args, **kwargs):
+        print("Données reçues:", request.data) # Affichez les données reçues
+        serializer = self.get_serializer(instance=self.get_object(), data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            print("Données validées et enregistrées:", serializer.data)
+            return Response(serializer.data)
+        else:
+            print("Erreurs de validation:", serializer.errors) # Affiche les erreurs de validation
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class UserRetrieveView(generics.RetrieveAPIView):
     queryset = User.objects.all()
