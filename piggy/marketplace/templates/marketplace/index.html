@@ -427,21 +427,32 @@
         }
 
         // Afficher le contenu de la page en fonction de l'ancre de l'URL
-        function showPageContent() {
-            const urlParams = new URLSearchParams(window.location.hash);
-            const page = urlParams.get('#');
-            const contentDivs = document.querySelectorAll('.content > div');
-            contentDivs.forEach(div => div.style.display = 'none');
+        // ... (Le reste de votre code)
 
-            if (page) {
-                const selectedDiv = document.getElementById(page);
-                if (selectedDiv) {
-                    selectedDiv.style.display = 'block';
-                }
-            } else {
-                document.getElementById('dashboard').style.display = 'block';
-            }
-        }
+// Afficher le contenu de la page en fonction de l'ancre de l'URL
+function showPageContent() {
+  // Utilisez window.location.pathname au lieu de window.location.hash
+  const pathname = window.location.pathname; 
+  console.log('path: ' + pathname)
+
+  const contentDivs = document.querySelectorAll('.content > div');
+  contentDivs.forEach(div => div.style.display = 'none');
+
+  // Afficher la page correspondante en fonction du pathname
+  if (pathname === '/#dashboard') {
+    document.getElementById('dashboard').style.display = 'block';
+  } else if (pathname === '/#users') {
+    document.getElementById('users').style.display = 'block';
+  } else if (pathname === '/#ads') {
+    document.getElementById('ads').style.display = 'block';
+  } else if (pathname === '/#orders') {
+    document.getElementById('orders').style.display = 'block';
+  } else if (pathname === '/#settings') {
+    document.getElementById('settings').style.display = 'block';
+  }
+}
+
+// ... (Le reste de votre code)
 
         // Mettre à jour le tableau des utilisateurs
         function updateUsersTable(users) {
