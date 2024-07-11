@@ -492,6 +492,8 @@ class OrderListView(generics.ListAPIView):
     permission_classes = [IsAdminUser]
 
     def get_queryset(self):
+        queryset = super().get_queryset()
+
         status = self.request.query_params.get('status', None)
         if status:
             return self.queryset.filter(status=status)
