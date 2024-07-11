@@ -524,28 +524,45 @@
         }
 
         // Charger les données et mettre à jour l'interface utilisateur
-        function loadData() {
-            showLoading();
-            Promise.all([
-                fetch('/api/admin/users/'),
-                fetch('/api/admin/ads/'),
-                fetch('/api/admin/orders/'),
-                fetch('/api/admin/stats/'),
-            ])
-                .then(responses => Promise.all(responses.map(response => response.json())))
-                .then(([users, ads, orders, stats]) => {
-                    updateUsersTable(users);
-                    updateAdsTable(ads);
-                    updateOrdersTable(orders);
-                    updateDashboardStats(stats);
-                    hideLoading();
-                })
-                .catch(error => {
-                    console.error('Erreur lors du chargement des données :', error);
-                    hideLoading();
-                    // Gérer l'erreur, par exemple, afficher un message d'erreur à l'utilisateur.
-                });
+        // Fonction pour charger les données (modifiée)
+function loadData() {
+    showLoading();
+
+    const token = localStorage.getItem('token'); // Récupérer le token
+
+    // Ajouter le token aux en-têtes des requêtes
+    const headers = {
+        'Content-Type': 'application/json',
+    };
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`; 
+    }
+
+    Promise.all([
+        fetch('/api/admin/users/', { headers }), // Inclure les en-têtes ici
+        fetch('/api/admin/ads/', { headers }), 
+        fetch('/api/admin/orders/', { headers }),
+        fetch('/api/admin/stats/', { headers }),
+    ])
+    .then(responses => Promise.all(responses.map(response => {
+        if (!response.ok) {
+            // Gérer les erreurs d'authentification, par exemple, rediriger vers la page de connexion
+            if (response.status === 401) {
+                logout(); // Rediriger ou afficher un message d'erreur
+            }
+            throw new Error(`Erreur HTTP : ${response.status} ${response.statusText}`);
         }
+        return response.json();
+    })))
+    .then(([users, ads, orders, stats]) => {
+        // ... (Votre code pour mettre à jour l'interface utilisateur) ...
+    })
+    .catch(error => {
+        console.error('Erreur lors du chargement des données :', error);
+        hideLoading();
+        // Gérer l'erreur, par exemple, afficher un message d'erreur à l'utilisateur.
+    });
+}
 
         // Afficher le div de chargement
         function showLoading() {

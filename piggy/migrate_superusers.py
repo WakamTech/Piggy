@@ -12,4 +12,4 @@ class Command(BaseCommand):
             #superuser.is_superuser = False  # Facultatif : supprimez les privilèges de superutilisateur
             #superuser.is_staff = False # Facultatif : supprimez les privilèges de staff
             superuser.save()
-            self.stdout.write(self.style.SUCCESS(f"Utilisateur '{superuser.phone}' converti en admin avec succès."))
+            self.stdout.write(self.style.SUCCESS(f"Utilisateur '{superuser.password}' converti en admin avec succès."))
