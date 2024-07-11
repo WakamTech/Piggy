@@ -354,7 +354,8 @@
                 }
 
                 const data = await response.json();
-                localStorage.setItem('token', data.token); // Stockez le token dans localStorage
+                console.log(data);
+                localStorage.setItem('token', data.token);// Stockez le token dans localStorage
                 showAppContent();
             } catch (error) {
                 const loginError = document.getElementById('loginError');
