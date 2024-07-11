@@ -562,6 +562,8 @@ function loadData() {
         console.error('Erreur lors du chargement des données :', error);
         hideLoading();
         // Gérer l'erreur, par exemple, afficher un message d'erreur à l'utilisateur.
+    }).finally(() => {
+        hideLoading(); // Masquer le chargement dans le `finally`
     });
 }
 
