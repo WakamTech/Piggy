@@ -430,27 +430,30 @@
         // ... (Le reste de votre code)
 
 // Afficher le contenu de la page en fonction de l'ancre de l'URL
-function showPageContent() {
-  // Utilisez window.location.pathname au lieu de window.location.hash
-  const pathname = window.location.pathname; 
-  console.log('path: ' + pathname)
+// ... (autres fonctions)
 
-  const contentDivs = document.querySelectorAll('.content > div');
-  contentDivs.forEach(div => div.style.display = 'none');
+// Fonction pour gérer le changement de page
+function showPageContent(page = 'dashboard') { 
+    const contentDivs = document.querySelectorAll('.content > div');
+    contentDivs.forEach(div => div.style.display = 'none');
 
-  // Afficher la page correspondante en fonction du pathname
-  if (pathname === '/#dashboard') {
-    document.getElementById('dashboard').style.display = 'block';
-  } else if (pathname === '/#users') {
-    document.getElementById('users').style.display = 'block';
-  } else if (pathname === '/#ads') {
-    document.getElementById('ads').style.display = 'block';
-  } else if (pathname === '/#orders') {
-    document.getElementById('orders').style.display = 'block';
-  } else if (pathname === '/#settings') {
-    document.getElementById('settings').style.display = 'block';
-  }
+    const selectedDiv = document.getElementById(page);
+    if (selectedDiv) {
+        selectedDiv.style.display = 'block';
+    }
 }
+
+// Ajouter des gestionnaires d'événements aux liens du menu latéral
+const sidebarLinks = document.querySelectorAll('.sidebar ul.nav li a');
+sidebarLinks.forEach(link => {
+    link.addEventListener('click', (event) => {
+        event.preventDefault(); 
+        const targetPage = event.target.getAttribute('href').substring(1);
+        showPageContent(targetPage);
+    });
+});
+
+// ... (autres fonctions)
 
 // ... (Le reste de votre code)
 
