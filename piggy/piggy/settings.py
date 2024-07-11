@@ -88,6 +88,11 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ),
+    'DEFAULT_CHARSET': 'utf-8',
 }
 
 SIMPLE_JWT = {
@@ -106,6 +111,9 @@ DATABASES = {
 #    'default': dj_database_url.config(default=DB_PATH)
 #}
 
+DATABASES['default']['OPTIONS'] = {
+    'client_encoding': 'UTF8',
+}
 
 AUTH_USER_MODEL = 'marketplace.User'
 

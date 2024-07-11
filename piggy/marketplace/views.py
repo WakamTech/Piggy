@@ -31,7 +31,10 @@ import os
 import firebase_admin
 from firebase_admin import credentials, auth
 
+from rest_framework.renderers import JSONRenderer
 
+class UTF8JSONRenderer(JSONRenderer):
+    charset = 'utf-8'
 
 from django.shortcuts import render
 from .models import User, Ad, Order

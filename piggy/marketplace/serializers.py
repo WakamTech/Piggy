@@ -4,6 +4,11 @@ from rest_framework import generics
 from rest_framework import serializers
 from .models import Config
 
+from rest_framework.renderers import JSONRenderer
+
+class UTF8JSONRenderer(JSONRenderer):
+    charset = 'utf-8'
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
