@@ -53,6 +53,7 @@ class User(AbstractUser):
     full_name = models.CharField(max_length=255, blank=True, null=True)
     notifications = models.BooleanField(default=True)
     fcm_token = models.CharField(max_length=255, blank=True, null=True)
+    image = models.TextField(max_length=255, blank=True, null=True)
 
     USERNAME_FIELD = 'phone'
     REQUIRED_FIELDS = []

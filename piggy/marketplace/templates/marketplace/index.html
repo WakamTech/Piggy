@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PiggyMarket - Administration</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <style>
+        /* Styles personnalisés */
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .sidebar {
+            background-color: #343a40;
+            color: #fff;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            padding-top: 60px;
+        }
+
+        .sidebar a {
+            color: #fff;
+            padding: 15px 20px;
+            display: block;
+            text-decoration: none;
+        }
+
+        .sidebar a:hover {
+            background-color: #563d7c;
+        }
+
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+
+        .table-container {
+            margin-top: 20px;
+        }
+
+        .table th,
+        .table td {
+            vertical-align: middle;
+        }
+
+        .ad-image {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+        }
+
+        .user-image {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* Styles pour le chargement */
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .loading-spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+<body>
+    <!-- Barre de navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">PiggyMarket - Administration</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Accueil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Déconnexion</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenu principal -->
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Barre latérale -->
+            <div class="col-md-2 sidebar">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#dashboard">
+                            <i class="bi bi-house-door"></i> Tableau de bord
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#users">
+                            <i class="bi bi-people"></i> Utilisateurs
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#ads">
+                            <i class="bi bi-card-list"></i> Annonces
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#orders">
+                            <i class="bi bi-cart-check"></i> Commandes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#settings">
+                            <i class="bi bi-gear"></i> Paramètres
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Contenu de la page -->
+            <div class="col-md-10 content">
+                <div id="dashboard">
+                    <h2>Tableau de bord</h2>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card text-white bg-primary mb-3">
+                                <div class="card-header">Utilisateurs</div>
+                                <div class="card-body">
+                                    <h5 class="card-title" id="totalUsers">0</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card text-white bg-success mb-3">
+                                <div class="card-header">Annonces</div>
+                                <div class="card-body">
+                                    <h5 class="card-title" id="totalAds">0</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card text-white bg-warning mb-3">
+                                <div class="card-header">Commandes</div>
+                                <div class="card-body">
+                                    <h5 class="card-title" id="totalOrders">0</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="users" style="display: none;">
+                    <h2>Utilisateurs</h2>
+                    <div class="table-container">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Photo</th>
+                                    <th>Nom complet</th>
+                                    <th>Téléphone</th>
+                                    <th>Rôle</th>
+                                    <th>Statut</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="ads" style="display: none;">
+                    <h2>Annonces</h2>
+                    <div class="table-container">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Photo</th>
+                                    <th>Titre</th>
+                                    <th>Ville</th>
+                                    <th>Prix</th>
+                                    <th>Statut</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="orders" style="display: none;">
+                    <h2>Commandes</h2>
+                    <div class="table-container">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Utilisateur</th>
+                                    <th>Annonce</th>
+                                    <th>Quantité</th>
+                                    <th>Statut</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="settings" style="display: none;">
+                    <h2>Paramètres</h2>
+                    <p>Page des paramètres à venir.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fenêtre modale pour la confirmation de suppression -->
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmer la suppression</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Êtes-vous sûr de vouloir supprimer cet élément ?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteButton">Supprimer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Div de chargement -->
+    <div class="loading" id="loading">
+        <div class="spinner-border loading-spinner" role="status">
+            <span class="visually-hidden">Chargement...</span>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Variables globales
+        const usersContainer = document.querySelector('#users tbody');
+        const adsContainer = document.querySelector('#ads tbody');
+        const ordersContainer = document.querySelector('#orders tbody');
+        const totalUsersElement = document.getElementById('totalUsers');
+        const totalAdsElement = document.getElementById('totalAds');
+        const totalOrdersElement = document.getElementById('totalOrders');
+        const confirmDeleteModal = document.getElementById('confirmDeleteModal');
+        const confirmDeleteButton = document.getElementById('confirmDeleteButton');
+        const loadingElement = document.getElementById('loading');
+        let itemIdToDelete; // Variable pour stocker l'ID de l'élément à supprimer
+
+        // Afficher le contenu de la page en fonction de l'ancre de l'URL
+        function showPageContent() {
+            const urlParams = new URLSearchParams(window.location.hash);
+            const page = urlParams.get('#');
+            const contentDivs = document.querySelectorAll('.content > div');
+            contentDivs.forEach(div => div.style.display = 'none');
+
+            if (page) {
+                const selectedDiv = document.getElementById(page);
+                if (selectedDiv) {
+                    selectedDiv.style.display = 'block';
+                }
+            } else {
+                document.getElementById('dashboard').style.display = 'block';
+            }
+        }
+
+        // Mettre à jour le tableau des utilisateurs
+        function updateUsersTable(users) {
+            usersContainer.innerHTML = '';
+            users.forEach(user => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user.id}</td>
+                    <td><img src="${user.image || 'https://via.placeholder.com/50'}" alt="Photo de profil" class="user-image"></td>
+                    <td>${user.full_name}</td>
+                    <td>${user.phone}</td>
+                    <td>${user.role}</td>
+                    <td>${user.is_active ? 'Actif' : 'Inactif'}</td>
+                    <td>
+                        <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editUserModal" data-user-id="${user.id}"><i class="bi bi-pencil"></i></a>
+                        <a href="#" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-item-id="${user.id}" data-delete-url="/api/admin/users/${user.id}/delete/"><i class="bi bi-trash"></i></a>
+                    </td>
+                `;
+                usersContainer.appendChild(row);
+            });
+        }
+
+        // Mettre à jour le tableau des annonces
+        function updateAdsTable(ads) {
+            adsContainer.innerHTML = '';
+            ads.forEach(ad => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${ad.id}</td>
+                    <td><img src="${ad.images[0] || 'https://via.placeholder.com/50'}" alt="Image de l'annonce" class="ad-image"></td>
+                    <td>${ad.title}</td>
+                    <td>${ad.city}</td>
+                    <td>${ad.price_per_kg}</td>
+                    <td>${ad.is_active ? 'Active' : 'Inactive'}</td>
+                    <td>
+                        <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editAdModal" data-ad-id="${ad.id}"><i class="bi bi-pencil"></i></a>
+                        <a href="#" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#confirmValidateModal" data-ad-id="${ad.id}" data-validate-url="/api/admin/ads/${ad.id}/validate/"><i class="bi bi-check-circle"></i></a>
+                        <a href="#" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-item-id="${ad.id}" data-delete-url="/api/admin/ads/${ad.id}/delete/"><i class="bi bi-trash"></i></a>
+                    </td>
+                `;
+                adsContainer.appendChild(row);
+            });
+        }
+
+        // Mettre à jour le tableau des commandes
+        function updateOrdersTable(orders) {
+            ordersContainer.innerHTML = '';
+            orders.forEach(order => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${order.id}</td>
+                    <td>${order.user.full_name}</td>
+                    <td>${order.ad.title}</td>
+                    <td>${order.quantity}</td>
+                    <td>${order.status}</td>
+                    <td>
+                        <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editOrderModal" data-order-id="${order.id}"><i class="bi bi-pencil"></i></a>
+                        <a href="#" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-item-id="${order.id}" data-delete-url="/api/admin/orders/${order.id}/delete/"><i class="bi bi-trash"></i></a>
+                    </td>
+                `;
+                ordersContainer.appendChild(row);
+            });
+        }
+
+        // Mettre à jour les statistiques du tableau de bord
+        function updateDashboardStats(data) {
+            totalUsersElement.textContent = data.total_users;
+            totalAdsElement.textContent = data.total_ads;
+            totalOrdersElement.textContent = data.total_orders;
+        }
+
+        // Gérer la suppression d'un élément
+        confirmDeleteModal.addEventListener('show.bs.modal', event => {
+            const button = event.relatedTarget;
+            itemIdToDelete = button.getAttribute('data-item-id');
+            const deleteUrl = button.getAttribute('data-delete-url');
+            confirmDeleteButton.setAttribute('data-delete-url', deleteUrl);
+        });
+
+        confirmDeleteButton.addEventListener('click', () => {
+            const deleteUrl = confirmDeleteButton.getAttribute('data-delete-url');
+            deleteItem(deleteUrl)
+                .then(() => {
+                    // Supprimer la ligne du tableau après la suppression réussie
+                    const rowToDelete = document.querySelector(`[data-item-id="${itemIdToDelete}"]`).closest('tr');
+                    if (rowToDelete) {
+                        rowToDelete.remove();
+                    }
+
+                    // Fermer la fenêtre modale
+                    confirmDeleteModal.hide();
+                })
+                .catch(error => {
+                    console.error('Erreur lors de la suppression de l\'élément :', error);
+                    // Gérer l'erreur, par exemple, afficher un message d'erreur à l'utilisateur.
+                });
+        });
+
+        // Fonction pour supprimer un élément
+        async function deleteItem(url) {
+            try {
+                const response = await fetch(url, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // Ajoutez les en-têtes d'autorisation si nécessaire
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP : ${response.status} ${response.statusText}`);
+                }
+
+                // Mettez à jour l'interface utilisateur ou rechargez les données si nécessaire.
+                // ...
+            } catch (error) {
+                console.error('Erreur lors de la suppression de l\'élément :', error);
+                throw error; // Propagez l'erreur pour la gérer davantage.
+            }
+        }
+
+        // Charger les données et mettre à jour l'interface utilisateur
+        function loadData() {
+            showLoading();
+            Promise.all([
+                fetch('/api/admin/users/'),
+                fetch('/api/admin/ads/'),
+                fetch('/api/admin/orders/'),
+                fetch('/api/admin/stats/'),
+            ])
+                .then(responses => Promise.all(responses.map(response => response.json())))
+                .then(([users, ads, orders, stats]) => {
+                    updateUsersTable(users);
+                    updateAdsTable(ads);
+                    updateOrdersTable(orders);
+                    updateDashboardStats(stats);
+                    hideLoading();
+                })
+                .catch(error => {
+                    console.error('Erreur lors du chargement des données :', error);
+                    hideLoading();
+                    // Gérer l'erreur, par exemple, afficher un message d'erreur à l'utilisateur.
+                });
+        }
+
+        // Afficher le div de chargement
+        function showLoading() {
+            loadingElement.style.display = 'block';
+        }
+
+        // Masquer le div de chargement
+        function hideLoading() {
+            loadingElement.style.display = 'none';
+        }
+
+        // Charger les données et afficher le contenu de la page au chargement de la page
+        window.addEventListener('load', () => {
+            loadData();
+            showPageContent();
+        });
+
+        // Mettre à jour le contenu de la page lorsque le hachage de l'URL change
+        window.addEventListener('hashchange', showPageContent);
+    </script>
+</body>
+</html>

@@ -4,6 +4,8 @@ from datetime import timedelta
 import django_heroku
 import firebase_admin
 from firebase_admin import credentials
+import dj_database_url
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -56,15 +58,15 @@ ROOT_URLCONF = "piggy.urls"
 
 TEMPLATES = [
     {
-        "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
-        "APP_DIRS": True,
-        "OPTIONS": {
-            "context_processors": [
-                "django.template.context_processors.debug",
-                "django.template.context_processors.request",
-                "django.contrib.auth.context_processors.auth",
-                "django.contrib.messages.context_processors.messages",
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [BASE_DIR / 'templates'],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
             ],
         },
     },
@@ -96,6 +98,11 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
+
+#DATABASES = {
+#    'default': dj_database_url.config(default='postgres://avnadmin:AVNS_epjxXb3fmpdFvyY6Cwf@pg-94dfe75-mnouletope-6017.k.aivencloud.com:15012/defaultdb?sslmode=require')
+#}
+
 
 AUTH_USER_MODEL = 'marketplace.User'
 
@@ -159,5 +166,10 @@ LOGGING = {
 }
 
 django_heroku.settings(locals())
+
+STATIC_URL = '/static/'
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
