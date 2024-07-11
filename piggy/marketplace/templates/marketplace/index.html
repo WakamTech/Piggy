@@ -79,196 +79,237 @@
             left: 50%;
             transform: translate(-50%, -50%);
         }
+
+        /* Styles pour la page de connexion */
+        #loginPage {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-form {
+            width: 400px;
+            padding: 40px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 <body>
-    <!-- Barre de navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+
+    <!-- Page de connexion -->
+    <div id="loginPage">
+        <div class="login-form">
+            <h2>Connexion Administrateur</h2>
+            <form id="loginForm">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Nom d'utilisateur:</label>
+                    <input type="text" class="form-control" id="username" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Mot de passe:</label>
+                    <input type="password" class="form-control" id="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Connexion</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Contenu de l'application (initialement masqué) -->
+    <div id="appContent" style="display:none;">
+        <!-- Barre de navigation -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">PiggyMarket - Administration</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="#dashboard">Accueil</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" id="logoutButton">Déconnexion</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Contenu principal -->
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">PiggyMarket - Administration</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Accueil</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Déconnexion</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+            <div class="row">
+                <!-- Barre latérale -->
+                <div class="col-md-2 sidebar">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#dashboard">
+                                <i class="bi bi-house-door"></i> Tableau de bord
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#users">
+                                <i class="bi bi-people"></i> Utilisateurs
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#ads">
+                                <i class="bi bi-card-list"></i> Annonces
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#orders">
+                                <i class="bi bi-cart-check"></i> Commandes
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#settings">
+                                <i class="bi bi-gear"></i> Paramètres
+                            </a>
+                        </li>
+                    </ul>
+                </div>
 
-    <!-- Contenu principal -->
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Barre latérale -->
-            <div class="col-md-2 sidebar">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#dashboard">
-                            <i class="bi bi-house-door"></i> Tableau de bord
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#users">
-                            <i class="bi bi-people"></i> Utilisateurs
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#ads">
-                            <i class="bi bi-card-list"></i> Annonces
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#orders">
-                            <i class="bi bi-cart-check"></i> Commandes
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#settings">
-                            <i class="bi bi-gear"></i> Paramètres
-                        </a>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Contenu de la page -->
-            <div class="col-md-10 content">
-                <div id="dashboard">
-                    <h2>Tableau de bord</h2>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="card text-white bg-primary mb-3">
-                                <div class="card-header">Utilisateurs</div>
-                                <div class="card-body">
-                                    <h5 class="card-title" id="totalUsers">0</h5>
+                <!-- Contenu de la page -->
+                <div class="col-md-10 content">
+                    <div id="dashboard">
+                        <h2>Tableau de bord</h2>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="card text-white bg-primary mb-3">
+                                    <div class="card-header">Utilisateurs</div>
+                                    <div class="card-body">
+                                        <h5 class="card-title" id="totalUsers">0</h5>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card text-white bg-success mb-3">
-                                <div class="card-header">Annonces</div>
-                                <div class="card-body">
-                                    <h5 class="card-title" id="totalAds">0</h5>
+                            <div class="col-md-4">
+                                <div class="card text-white bg-success mb-3">
+                                    <div class="card-header">Annonces</div>
+                                    <div class="card-body">
+                                        <h5 class="card-title" id="totalAds">0</h5>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card text-white bg-warning mb-3">
-                                <div class="card-header">Commandes</div>
-                                <div class="card-body">
-                                    <h5 class="card-title" id="totalOrders">0</h5>
+                            <div class="col-md-4">
+                                <div class="card text-white bg-warning mb-3">
+                                    <div class="card-header">Commandes</div>
+                                    <div class="card-body">
+                                        <h5 class="card-title" id="totalOrders">0</h5>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div id="users" style="display: none;">
-                    <h2>Utilisateurs</h2>
-                    <div class="table-container">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Photo</th>
-                                    <th>Nom complet</th>
-                                    <th>Téléphone</th>
-                                    <th>Rôle</th>
-                                    <th>Statut</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                    <div id="users" style="display: none;">
+                        <h2>Utilisateurs</h2>
+                        <div class="table-container">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Photo</th>
+                                        <th>Nom complet</th>
+                                        <th>Téléphone</th>
+                                        <th>Rôle</th>
+                                        <th>Statut</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
                                 </tbody>
-                        </table>
+                            </table>
+                        </div>
                     </div>
-                </div>
 
-                <div id="ads" style="display: none;">
-                    <h2>Annonces</h2>
-                    <div class="table-container">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Photo</th>
-                                    <th>Titre</th>
-                                    <th>Ville</th>
-                                    <th>Prix</th>
-                                    <th>Statut</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                    <div id="ads" style="display: none;">
+                        <h2>Annonces</h2>
+                        <div class="table-container">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Photo</th>
+                                        <th>Titre</th>
+                                        <th>Ville</th>
+                                        <th>Prix</th>
+                                        <th>Statut</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
                                 </tbody>
-                        </table>
+                            </table>
+                        </div>
                     </div>
-                </div>
 
-                <div id="orders" style="display: none;">
-                    <h2>Commandes</h2>
-                    <div class="table-container">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Utilisateur</th>
-                                    <th>Annonce</th>
-                                    <th>Quantité</th>
-                                    <th>Statut</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                    <div id="orders" style="display: none;">
+                        <h2>Commandes</h2>
+                        <div class="table-container">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Utilisateur</th>
+                                        <th>Annonce</th>
+                                        <th>Quantité</th>
+                                        <th>Statut</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
                                 </tbody>
-                        </table>
+                            </table>
+                        </div>
                     </div>
-                </div>
 
-                <div id="settings" style="display: none;">
-                    <h2>Paramètres</h2>
-                    <p>Page des paramètres à venir.</p>
+                    <div id="settings" style="display: none;">
+                        <h2>Paramètres</h2>
+                        <p>Page des paramètres à venir.</p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Fenêtre modale pour la confirmation de suppression -->
-    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmer la suppression</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Êtes-vous sûr de vouloir supprimer cet élément ?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                    <button type="button" class="btn btn-danger" id="confirmDeleteButton">Supprimer</button>
+        <!-- Fenêtre modale pour la confirmation de suppression -->
+        <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmer la suppression</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Êtes-vous sûr de vouloir supprimer cet élément ?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-danger" id="confirmDeleteButton">Supprimer</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Div de chargement -->
-    <div class="loading" id="loading">
-        <div class="spinner-border loading-spinner" role="status">
-            <span class="visually-hidden">Chargement...</span>
+        <!-- Div de chargement -->
+        <div class="loading" id="loading">
+            <div class="spinner-border loading-spinner" role="status">
+                <span class="visually-hidden">Chargement...</span>
+            </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Variables globales
+        const loginPage = document.getElementById('loginPage');
+        const appContent = document.getElementById('appContent');
+        const loginForm = document.getElementById('loginForm');
         const usersContainer = document.querySelector('#users tbody');
         const adsContainer = document.querySelector('#ads tbody');
         const ordersContainer = document.querySelector('#orders tbody');
@@ -278,7 +319,36 @@
         const confirmDeleteModal = document.getElementById('confirmDeleteModal');
         const confirmDeleteButton = document.getElementById('confirmDeleteButton');
         const loadingElement = document.getElementById('loading');
+        const logoutButton = document.getElementById('logoutButton');
         let itemIdToDelete; // Variable pour stocker l'ID de l'élément à supprimer
+
+        // Fonction pour simuler une authentification (à remplacer par une vraie logique d'authentification)
+        function authenticate(username, password) {
+            // Remplacez ceci par votre propre logique d'authentification
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    if (username === 'admin' && password === 'admin') {
+                        resolve();
+                    } else {
+                        reject(new Error('Nom d\'utilisateur ou mot de passe incorrect.'));
+                    }
+                }, 500); // Simulation d'un délai de 500 ms
+            });
+        }
+
+        // Afficher le contenu de l'application après une authentification réussie
+        function showAppContent() {
+            loginPage.style.display = 'none';
+            appContent.style.display = 'block';
+            loadData();
+            showPageContent();
+        }
+
+        // Afficher la page de connexion en cas de déconnexion
+        function logout() {
+            loginPage.style.display = 'flex';
+            appContent.style.display = 'none';
+        }
 
         // Afficher le contenu de la page en fonction de l'ancre de l'URL
         function showPageContent() {
@@ -451,13 +521,32 @@
             loadingElement.style.display = 'none';
         }
 
-        // Charger les données et afficher le contenu de la page au chargement de la page
-        window.addEventListener('load', () => {
-            loadData();
-            showPageContent();
+        // Gestionnaire d'événements pour le formulaire de connexion
+        loginForm.addEventListener('submit', (event) => {
+            event.preventDefault(); // Empêcher la soumission du formulaire par défaut
+            const username = event.target.querySelector('#username').value;
+            const password = event.target.querySelector('#password').value;
+            authenticate(username, password)
+                .then(() => {
+                    showAppContent();
+                })
+                .catch(error => {
+                    // Afficher un message d'erreur à l'utilisateur
+                    alert(error.message);
+                });
         });
 
-        // Mettre à jour le contenu de la page lorsque le hachage de l'URL change
+        // Gestionnaire d'événements pour le bouton de déconnexion
+        logoutButton.addEventListener('click', () => {
+            logout();
+        });
+
+        // Afficher la page de connexion au chargement de la page
+        window.addEventListener('load', () => {
+            loginPage.style.display = 'flex';
+        });
+
+        // Mettre à jour le contenu de la page lorsque le hachage de l'URL change (après la connexion)
         window.addEventListener('hashchange', showPageContent);
     </script>
 </body>
