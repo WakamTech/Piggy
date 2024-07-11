@@ -459,10 +459,14 @@ class AdListView(generics.ListAPIView):
     permission_classes = [IsAdminUser]
 
     def get_queryset(self):
+        queryset = super().get_queryset()
         status = self.request.query_params.get('status', None)
-        if status:
-            return self.queryset.filter(is_active=(status == 'active'))
-        return self.queryset
+        if status == 'active':
+            return queryset.filter(is_active=True)
+        elif status == 'inactive':
+            return queryset.filter(is_active=False)
+        return queryset
+
 
 class AdValidateView(APIView):
     permission_classes = [IsAdminUser]
