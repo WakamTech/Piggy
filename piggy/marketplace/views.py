@@ -509,7 +509,7 @@ from django.db.models import Sum, F
 @api_view(['GET'])
 @permission_classes([IsAdminUser])
 def get_stats(request):
-    print(request)
+    #print(request)
     total_users = User.objects.count()
     total_ads = Ad.objects.count()
     total_orders = Order.objects.count()

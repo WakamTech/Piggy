@@ -11,8 +11,6 @@ from firebase_admin import credentials, auth
 import os
 
 
-
-
 @receiver(post_save, sender=Order)
 def create_order_notification(sender, instance, created, **kwargs):
     if created:
