@@ -435,8 +435,8 @@ class UserListView(generics.ListAPIView):
         queryset = super().get_queryset()
         role = self.request.query_params.get('role', None)
         if role:
-            return self.queryset.filter(role=role)
-        return self.queryset
+            return queryset.filter(role=role)
+        return queryset
 
 class IsOwnerOrAdmin(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
@@ -496,8 +496,8 @@ class OrderListView(generics.ListAPIView):
 
         status = self.request.query_params.get('status', None)
         if status:
-            return self.queryset.filter(status=status)
-        return self.queryset
+            return queryset.filter(status=status)
+        return queryset
 
 class OrderUpdateView(generics.UpdateAPIView):
     queryset = Order.objects.all()
