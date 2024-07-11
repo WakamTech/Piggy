@@ -348,18 +348,6 @@
     // Variables globales
 // ... (Your existing JavaScript code) ...
 
-// Attach event listeners to navigation links
-const dashboardLink = document.querySelector('a[href="#dashboard"]');
-const usersLink = document.querySelector('a[href="#users"]');
-const adsLink = document.querySelector('a[href="#ads"]');
-const ordersLink = document.querySelector('a[href="#orders"]');
-const settingsLink = document.querySelector('a[href="#settings"]');
-
-dashboardLink.addEventListener('click', showPageContent);
-usersLink.addEventListener('click', showPageContent);
-adsLink.addEventListener('click', showPageContent);
-ordersLink.addEventListener('click', showPageContent);
-settingsLink.addEventListener('click', showPageContent);
 
 // ... (Your other JavaScript code) ...
 
@@ -417,22 +405,61 @@ settingsLink.addEventListener('click', showPageContent);
         appContent.style.display = 'none';
     }
 
-    // Afficher le contenu de la page en fonction de l'ancre de l'URL
-    function showPageContent() {
-        const urlParams = new URLSearchParams(window.location.hash);
-        const page = urlParams.get('#');
-        const contentDivs = document.querySelectorAll('.content > div');
-        contentDivs.forEach(div => div.style.display = 'none');
+    // ... (Your existing JavaScript code) ...
 
-        if (page) {
-            const selectedDiv = document.getElementById(page);
-            if (selectedDiv) {
-                selectedDiv.style.display = 'block';
-            }
-        } else {
-            document.getElementById('dashboard').style.display = 'block';
+// Attach event listeners to navigation links
+const dashboardLink = document.querySelector('a[href="#dashboard"]');
+const usersLink = document.querySelector('a[href="#users"]');
+const adsLink = document.querySelector('a[href="#ads"]');
+const ordersLink = document.querySelector('a[href="#orders"]');
+const settingsLink = document.querySelector('a[href="#settings"]');
+
+// Add event listeners for each link 
+dashboardLink.addEventListener('click', (event) => {
+    event.preventDefault(); // Prevent default link behavior
+    showPageContent(event.target.href); 
+});
+
+usersLink.addEventListener('click', (event) => {
+    event.preventDefault();
+    showPageContent(event.target.href);
+});
+
+adsLink.addEventListener('click', (event) => {
+    event.preventDefault();
+    showPageContent(event.target.href);
+});
+
+ordersLink.addEventListener('click', (event) => {
+    event.preventDefault();
+    showPageContent(event.target.href);
+});
+
+settingsLink.addEventListener('click', (event) => {
+    event.preventDefault();
+    showPageContent(event.target.href);
+});
+
+// ... (Your other JavaScript code) ...
+
+// Function to show page content (modified)
+function showPageContent(href) { 
+    const urlParams = new URLSearchParams(href); // Get params from href
+    const page = urlParams.get('#');
+    const contentDivs = document.querySelectorAll('.content > div');
+    contentDivs.forEach(div => div.style.display = 'none');
+
+    if (page) {
+        const selectedDiv = document.getElementById(page);
+        if (selectedDiv) {
+            selectedDiv.style.display = 'block';
         }
+    } else {
+        document.getElementById('dashboard').style.display = 'block';
     }
+}
+
+
 
     // Mettre à jour le tableau des utilisateurs
     function updateUsersTable(users) {
