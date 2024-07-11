@@ -345,6 +345,26 @@
     let itemIdToDelete; // Variable pour stocker l'ID de l'élément à supprimer
     let adIdToValidate; // Variable pour stocker l'ID de l'annonce à valider
 
+    // Variables globales
+// ... (Your existing JavaScript code) ...
+
+// Attach event listeners to navigation links
+const dashboardLink = document.querySelector('a[href="#dashboard"]');
+const usersLink = document.querySelector('a[href="#users"]');
+const adsLink = document.querySelector('a[href="#ads"]');
+const ordersLink = document.querySelector('a[href="#orders"]');
+const settingsLink = document.querySelector('a[href="#settings"]');
+
+dashboardLink.addEventListener('click', showPageContent);
+usersLink.addEventListener('click', showPageContent);
+adsLink.addEventListener('click', showPageContent);
+ordersLink.addEventListener('click', showPageContent);
+settingsLink.addEventListener('click', showPageContent);
+
+// ... (Your other JavaScript code) ...
+
+
+
     // Fonction pour gérer la connexion
     async function login(phone, password) {
         try {
