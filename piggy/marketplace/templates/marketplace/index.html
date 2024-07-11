@@ -99,303 +99,560 @@
 </head>
 <body>
 
-    <!-- Page de connexion -->
-    <div id="loginPage">
-        <div class="login-form">
-            <h2>Connexion Administrateur</h2>
-            <form id="loginForm">
-                <div class="mb-3">
-                    <label for="phone" class="form-label">Numéro de téléphone:</label>
-                    <input type="text" class="form-control" id="phone" required>
-                </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label">Mot de passe:</label>
-                    <input type="password" class="form-control" id="password" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Connexion</button>
-                <div id="loginError" class="alert alert-danger mt-3" style="display: none;"></div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Contenu de l'application (initialement masqué) -->
-    <div id="appContent" style="display:none;">
-        <!-- Barre de navigation -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#">PiggyMarket - Administration</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#dashboard">Accueil</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#" id="logoutButton">Déconnexion</a>
-                        </li>
-                    </ul>
-                </div>
+<!-- Page de connexion -->
+<div id="loginPage">
+    <div class="login-form">
+        <h2>Connexion Administrateur</h2>
+        <form id="loginForm">
+            <div class="mb-3">
+                <label for="phone" class="form-label">Numéro de téléphone:</label>
+                <input type="text" class="form-control" id="phone" required>
             </div>
-        </nav>
+            <div class="mb-3">
+                <label for="password" class="form-label">Mot de passe:</label>
+                <input type="password" class="form-control" id="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Connexion</button>
+            <div id="loginError" class="alert alert-danger mt-3" style="display: none;"></div>
+        </form>
+    </div>
+</div>
 
-        <!-- Contenu principal -->
+<!-- Contenu de l'application (initialement masqué) -->
+<div id="appContent" style="display:none;">
+    <!-- Barre de navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
-            <div class="row">
-                <!-- Barre latérale -->
-                <div class="col-md-2 sidebar">
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link" href="#dashboard">
-                                <i class="bi bi-house-door"></i> Tableau de bord
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#users">
-                                <i class="bi bi-people"></i> Utilisateurs
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#ads">
-                                <i class="bi bi-card-list"></i> Annonces
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#orders">
-                                <i class="bi bi-cart-check"></i> Commandes
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#settings">
-                                <i class="bi bi-gear"></i> Paramètres
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Contenu de la page -->
-                <div class="col-md-10 content">
-                    <div id="dashboard">
-                        <h2>Tableau de bord</h2>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="card text-white bg-primary mb-3">
-                                    <div class="card-header">Utilisateurs</div>
-                                    <div class="card-body">
-                                        <h5 class="card-title" id="totalUsers">0</h5>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="card text-white bg-success mb-3">
-                                    <div class="card-header">Annonces</div>
-                                    <div class="card-body">
-                                        <h5 class="card-title" id="totalAds">0</h5>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="card text-white bg-warning mb-3">
-                                    <div class="card-header">Commandes</div>
-                                    <div class="card-body">
-                                        <h5 class="card-title" id="totalOrders">0</h5>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="users" style="display: none;">
-                        <h2>Utilisateurs</h2>
-                        <div class="table-container">
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Photo</th>
-                                        <th>Nom complet</th>
-                                        <th>Téléphone</th>
-                                        <th>Rôle</th>
-                                        <th>Statut</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div id="ads" style="display: none;">
-                        <h2>Annonces</h2>
-                        <div class="table-container">
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Photo</th>
-                                        <th>Titre</th>
-                                        <th>Ville</th>
-                                        <th>Prix</th>
-                                        <th>Statut</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div id="orders" style="display: none;">
-                        <h2>Commandes</h2>
-                        <div class="table-container">
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Utilisateur</th>
-                                        <th>Annonce</th>
-                                        <th>Quantité</th>
-                                        <th>Statut</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div id="settings" style="display: none;">
-                        <h2>Paramètres</h2>
-                        <p>Page des paramètres à venir.</p>
-                    </div>
-                </div>
+            <a class="navbar-brand" href="#">PiggyMarket - Administration</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#dashboard">Accueil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="logoutButton">Déconnexion</a>
+                    </li>
+                </ul>
             </div>
         </div>
+    </nav>
 
-        <!-- Fenêtre modale pour la confirmation de suppression -->
-        <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmation de suppression</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        Êtes-vous sûr de vouloir supprimer cet élément ?
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                        <button type="button" class="btn btn-danger" id="confirmDeleteButton">Supprimer</button>
+    <!-- Contenu principal -->
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Barre latérale -->
+            <div class="col-md-2 sidebar">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#dashboard">
+                            <i class="bi bi-house-door"></i> Tableau de bord
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#users">
+                            <i class="bi bi-people"></i> Utilisateurs
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#ads">
+                            <i class="bi bi-card-list"></i> Annonces
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#orders">
+                            <i class="bi bi-cart-check"></i> Commandes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#settings">
+                            <i class="bi bi-gear"></i> Paramètres
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Contenu de la page -->
+            <div class="col-md-10 content">
+                <div id="dashboard" style="display: block;">
+                    <h2>Tableau de bord</h2>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card text-white bg-primary mb-3">
+                                <div class="card-header">Utilisateurs</div>
+                                <div class="card-body">
+                                    <h5 class="card-title" id="totalUsers">0</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card text-white bg-success mb-3">
+                                <div class="card-header">Annonces</div>
+                                <div class="card-body">
+                                    <h5 class="card-title" id="totalAds">0</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card text-white bg-warning mb-3">
+                                <div class="card-header">Commandes</div>
+                                <div class="card-body">
+                                    <h5 class="card-title" id="totalOrders">0</h5>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Chargement -->
-        <div class="loading" id="loading">
-            <div class="loading-spinner">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Chargement...</span>
+                <div id="users" style="display: none;">
+                    <h2>Utilisateurs</h2>
+                    <div class="table-container">
+                        <table class="table table-striped" id="usersTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Photo</th>
+                                    <th>Nom complet</th>
+                                    <th>Téléphone</th>
+                                    <th>Rôle</th>
+                                    <th>Statut</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="ads" style="display: none;">
+                    <h2>Annonces</h2>
+                    <div class="table-container">
+                        <table class="table table-striped" id="adsTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Photo</th>
+                                    <th>Titre</th>
+                                    <th>Ville</th>
+                                    <th>Prix</th>
+                                    <th>Statut</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="orders" style="display: none;">
+                    <h2>Commandes</h2>
+                    <div class="table-container">
+                        <table class="table table-striped" id="ordersTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Utilisateur</th>
+                                    <th>Annonce</th>
+                                    <th>Quantité</th>
+                                    <th>Statut</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="settings" style="display: none;">
+                    <h2>Paramètres</h2>
+                    <p>Page des paramètres à venir.</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- JavaScript Bootstrap -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const loginForm = document.getElementById('loginForm');
-            const loginPage = document.getElementById('loginPage');
-            const appContent = document.getElementById('appContent');
+    <!-- Fenêtres modales (suppression, validation, etc.) -->
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmer la suppression</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Êtes-vous sûr de vouloir supprimer cet élément ?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteButton">Supprimer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="confirmValidateModal" tabindex="-1" aria-labelledby="confirmValidateModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmValidateModalLabel">Confirmer la validation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Êtes-vous sûr de vouloir valider cette annonce ?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-success" id="confirmValidateButton">Valider</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Div de chargement -->
+    <div class="loading" id="loading">
+        <div class="spinner-border loading-spinner" role="status">
+            <span class="visually-hidden">Chargement...</span>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Variables globales
+    const loginPage = document.getElementById('loginPage');
+    const appContent = document.getElementById('appContent');
+    const loginForm = document.getElementById('loginForm');
+    const usersContainer = document.querySelector('#usersTable tbody');
+    const adsContainer = document.querySelector('#adsTable tbody');
+    const ordersContainer = document.querySelector('#ordersTable tbody');
+    const totalUsersElement = document.getElementById('totalUsers');
+    const totalAdsElement = document.getElementById('totalAds');
+    const totalOrdersElement = document.getElementById('totalOrders');
+    const confirmDeleteModal = document.getElementById('confirmDeleteModal');
+    const confirmDeleteButton = document.getElementById('confirmDeleteButton');
+    const confirmValidateModal = document.getElementById('confirmValidateModal');
+    const confirmValidateButton = document.getElementById('confirmValidateButton');
+    const loadingElement = document.getElementById('loading');
+    const logoutButton = document.getElementById('logoutButton');
+    let itemIdToDelete; // Variable pour stocker l'ID de l'élément à supprimer
+    let adIdToValidate; // Variable pour stocker l'ID de l'annonce à valider
+
+    // Fonction pour gérer la connexion
+    async function login(phone, password) {
+        try {
+            showLoading();
+            const response = await fetch('/api/login/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ phone, password }),
+            });
+
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.error || 'Erreur lors de la connexion.');
+            }
+
+            const data = await response.json();
+            localStorage.setItem('token', data.token);
+            showAppContent();
+        } catch (error) {
             const loginError = document.getElementById('loginError');
-            const loading = document.getElementById('loading');
-            const totalUsers = document.getElementById('totalUsers');
-            const totalAds = document.getElementById('totalAds');
-            const totalOrders = document.getElementById('totalOrders');
-            const logoutButton = document.getElementById('logoutButton');
+            loginError.textContent = error.message;
+            loginError.style.display = 'block';
+        } finally {
+            hideLoading();
+        }
+    }
 
-            // Simulate authentication check
-            let isAuthenticated = false;
+    // Gestionnaire d'événements pour le formulaire de connexion
+    loginForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const phone = event.target.querySelector('#phone').value;
+        const password = event.target.querySelector('#password').value;
+        await login(phone, password); 
+    });
 
-            // Handle login form submission
-            loginForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const phone = document.getElementById('phone').value;
-                const password = document.getElementById('password').value;
-                
-                // Show loading spinner
-                loading.style.display = 'block';
+    // Afficher le contenu de l'application après une authentification réussie
+    function showAppContent() {
+        loginPage.style.display = 'none';
+        appContent.style.display = 'block';
+        loadData();
+        showPageContent();
+    }
 
-                try {
-                    // Simulate login process
-                    await new Promise(resolve => setTimeout(resolve, 1000));
+    // Afficher la page de connexion en cas de déconnexion
+    function logout() {
+        localStorage.removeItem('token'); // Supprimer le token
+        loginPage.style.display = 'flex';
+        appContent.style.display = 'none';
+    }
 
-                    if (phone === 'admin' && password === 'password') {
-                        isAuthenticated = true;
-                        loginPage.style.display = 'none';
-                        appContent.style.display = 'block';
-                        fetchData();
-                    } else {
-                        loginError.textContent = 'Numéro de téléphone ou mot de passe incorrect.';
-                        loginError.style.display = 'block';
-                    }
-                } catch (error) {
-                    loginError.textContent = 'Une erreur est survenue. Veuillez réessayer.';
-                    loginError.style.display = 'block';
-                } finally {
-                    loading.style.display = 'none';
-                }
-            });
+    // Afficher le contenu de la page en fonction de l'ancre de l'URL
+    function showPageContent() {
+        const urlParams = new URLSearchParams(window.location.hash);
+        const page = urlParams.get('#');
+        const contentDivs = document.querySelectorAll('.content > div');
+        contentDivs.forEach(div => div.style.display = 'none');
 
-            // Handle logout button click
-            logoutButton.addEventListener('click', () => {
-                isAuthenticated = false;
-                loginPage.style.display = 'flex';
-                appContent.style.display = 'none';
-            });
-
-            // Simulate data fetching
-            async function fetchData() {
-                try {
-                    // Simulate data fetch
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-                    totalUsers.textContent = '10';
-                    totalAds.textContent = '5';
-                    totalOrders.textContent = '3';
-                } catch (error) {
-                    console.error('Failed to fetch data:', error);
-                }
+        if (page) {
+            const selectedDiv = document.getElementById(page);
+            if (selectedDiv) {
+                selectedDiv.style.display = 'block';
             }
+        } else {
+            document.getElementById('dashboard').style.display = 'block';
+        }
+    }
 
-            // Initial authentication check
-            if (isAuthenticated) {
-                loginPage.style.display = 'none';
-                appContent.style.display = 'block';
-                fetchData();
-            } else {
-                loginPage.style.display = 'flex';
-                appContent.style.display = 'none';
-            }
-
-            // Function to navigate between sections
-            const navLinks = document.querySelectorAll('.nav-link');
-            navLinks.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const target = link.getAttribute('href').substring(1);
-                    document.querySelectorAll('.content > div').forEach(section => {
-                        section.style.display = 'none';
-                    });
-                    document.getElementById(target).style.display = 'block';
-                });
-            });
+    // Mettre à jour le tableau des utilisateurs
+    function updateUsersTable(users) {
+        usersContainer.innerHTML = '';
+        users.forEach(user => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${user.id}</td>
+                <td><img src="${user.image || 'https://via.placeholder.com/50'}" alt="Photo de profil" class="user-image"></td>
+                <td>${user.full_name}</td>
+                <td>${user.phone}</td>
+                <td>${user.role}</td>
+                <td>${user.is_active ? 'Actif' : 'Inactif'}</td>
+                <td>
+                    <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editUserModal" data-user-id="${user.id}"><i class="bi bi-pencil"></i></a>
+                    <a href="#" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-item-id="${user.id}" data-delete-url="/api/admin/users/${user.id}/delete/"><i class="bi bi-trash"></i></a>
+                </td>
+            `;
+            usersContainer.appendChild(row);
         });
-    </script>
+    }
+
+    // Mettre à jour le tableau des annonces
+    function updateAdsTable(ads) {
+        adsContainer.innerHTML = '';
+        ads.forEach(ad => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${ad.id}</td>
+                <td><img src="${ad.images[0] || 'https://via.placeholder.com/50'}" alt="Image de l'annonce" class="ad-image"></td>
+                <td>${ad.title}</td>
+                <td>${ad.city}</td>
+                <td>${ad.price_per_kg}</td>
+                <td>${ad.is_active ? 'Active' : 'Inactive'}</td>
+                <td>
+                    <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editAdModal" data-ad-id="${ad.id}"><i class="bi bi-pencil"></i></a>
+                    <a href="#" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#confirmValidateModal" data-ad-id="${ad.id}" data-validate-url="/api/admin/ads/${ad.id}/validate/"><i class="bi bi-check-circle"></i></a>
+                    <a href="#" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-item-id="${ad.id}" data-delete-url="/api/admin/ads/${ad.id}/delete/"><i class="bi bi-trash"></i></a>
+                </td>
+            `;
+            adsContainer.appendChild(row);
+        });
+    }
+
+    // Mettre à jour le tableau des commandes
+    function updateOrdersTable(orders) {
+        ordersContainer.innerHTML = '';
+        orders.forEach(order => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${order.id}</td>
+                <td>${order.user.full_name}</td>
+                <td>${order.ad.title}</td>
+                <td>${order.quantity}</td>
+                <td>${order.status}</td>
+                <td>
+                    <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editOrderModal" data-order-id="${order.id}"><i class="bi bi-pencil"></i></a>
+                    <a href="#" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-item-id="${order.id}" data-delete-url="/api/admin/orders/${order.id}/delete/"><i class="bi bi-trash"></i></a>
+                </td>
+            `;
+            ordersContainer.appendChild(row);
+        });
+    }
+
+    // Mettre à jour les statistiques du tableau de bord
+    function updateDashboardStats(data) {
+        totalUsersElement.textContent = data.total_users;
+        totalAdsElement.textContent = data.total_ads;
+        totalOrdersElement.textContent = data.total_orders;
+    }
+
+    // Gérer la suppression d'un élément
+    confirmDeleteModal.addEventListener('show.bs.modal', event => {
+        const button = event.relatedTarget;
+        itemIdToDelete = button.getAttribute('data-item-id');
+        const deleteUrl = button.getAttribute('data-delete-url');
+        confirmDeleteButton.setAttribute('data-delete-url', deleteUrl);
+    });
+
+    confirmDeleteButton.addEventListener('click', () => {
+        const deleteUrl = confirmDeleteButton.getAttribute('data-delete-url');
+        deleteItem(deleteUrl)
+            .then(() => {
+                // Supprimer la ligne du tableau après la suppression réussie
+                const rowToDelete = document.querySelector(`[data-item-id="${itemIdToDelete}"]`).closest('tr');
+                if (rowToDelete) {
+                    rowToDelete.remove();
+                }
+
+                // Fermer la fenêtre modale
+                confirmDeleteModal.hide();
+            })
+            .catch(error => {
+                console.error('Erreur lors de la suppression de l\'élément :', error);
+                // Gérer l'erreur, par exemple, afficher un message d'erreur à l'utilisateur.
+            });
+    });
+
+    // Fonction pour supprimer un élément
+    async function deleteItem(url) {
+        try {
+            const response = await fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`Erreur HTTP : ${response.status} ${response.statusText}`);
+            }
+
+            // Mettez à jour l'interface utilisateur ou rechargez les données si nécessaire.
+            // ...
+        } catch (error) {
+            console.error('Erreur lors de la suppression de l\'élément :', error);
+            throw error; // Propagez l'erreur pour la gérer davantage.
+        }
+    }
+
+    // Gérer la validation d'une annonce
+    confirmValidateModal.addEventListener('show.bs.modal', event => {
+        const button = event.relatedTarget;
+        adIdToValidate = button.getAttribute('data-ad-id');
+        const validateUrl = button.getAttribute('data-validate-url');
+        confirmValidateButton.setAttribute('data-validate-url', validateUrl);
+    });
+
+    confirmValidateButton.addEventListener('click', () => {
+        const validateUrl = confirmValidateButton.getAttribute('data-validate-url');
+        validateAd(validateUrl)
+            .then(() => {
+                // Mettre à jour la ligne du tableau après la validation réussie
+                const rowToUpdate = document.querySelector(`[data-ad-id="${adIdToValidate}"]`).closest('tr');
+                if (rowToUpdate) {
+                    const statusCell = rowToUpdate.querySelector('td:nth-child(6)'); // Supposons que la cellule de statut est la 6e
+                    statusCell.textContent = 'Active';
+                }
+
+                // Fermer la fenêtre modale
+                confirmValidateModal.hide();
+            })
+            .catch(error => {
+                console.error('Erreur lors de la validation de l\'annonce :', error);
+                // Gérer l'erreur, par exemple, afficher un message d'erreur à l'utilisateur.
+            });
+    });
+
+    // Fonction pour valider une annonce
+    async function validateAd(url) {
+        try {
+            const response = await fetch(url, {
+                method: 'PUT', // Utilisez PUT pour la validation
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`Erreur HTTP : ${response.status} ${response.statusText}`);
+            }
+
+            // Mettez à jour l'interface utilisateur ou rechargez les données si nécessaire.
+            // ...
+        } catch (error) {
+            console.error('Erreur lors de la validation de l\'annonce :', error);
+            throw error; // Propagez l'erreur pour la gérer davantage.
+        }
+    }
+
+    // Charger les données et mettre à jour l'interface utilisateur
+    async function loadData() {
+        showLoading();
+
+        const token = localStorage.getItem('token');
+
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        };
+
+        try {
+            const usersResponse = await fetch('/api/admin/users/', { headers });
+            const adsResponse = await fetch('/api/admin/ads/', { headers });
+            const ordersResponse = await fetch('/api/admin/orders/', { headers });
+            const statsResponse = await fetch('/api/admin/stats/', { headers });
+
+            if (!usersResponse.ok || !adsResponse.ok || !ordersResponse.ok || !statsResponse.ok) {
+                // Gérer les erreurs d'autorisation (401 Unauthorized)
+                if (usersResponse.status === 401 || adsResponse.status === 401 ||
+                    ordersResponse.status === 401 || statsResponse.status === 401) {
+                    logout();
+                    throw new Error('Session expirée. Veuillez vous reconnecter.');
+                }
+                throw new Error('Erreur lors du chargement des données.');
+            }
+
+            const users = await usersResponse.json();
+            const ads = await adsResponse.json();
+            const orders = await ordersResponse.json();
+            const stats = await statsResponse.json();
+
+            updateUsersTable(users);
+            updateAdsTable(ads);
+            updateOrdersTable(orders);
+            updateDashboardStats(stats);
+
+        } catch (error) {
+            console.error('Erreur lors du chargement des données :', error);
+            // Afficher un message d'erreur à l'utilisateur
+            alert(error.message);
+        } finally {
+            hideLoading();
+        }
+    }
+
+    // Afficher le div de chargement
+    function showLoading() {
+        loadingElement.style.display = 'block';
+    }
+
+    // Masquer le div de chargement
+    function hideLoading() {
+        loadingElement.style.display = 'none';
+    }
+
+    // Gestionnaire d'événements pour le bouton de déconnexion
+    logoutButton.addEventListener('click', () => {
+        logout();
+    });
+
+    // Afficher la page de connexion au chargement de la page
+    window.addEventListener('load', () => {
+        loginPage.style.display = 'flex';
+    });
+
+    // Mettre à jour le contenu de la page lorsque le hachage de l'URL change (après la connexion)
+    window.addEventListener('hashchange', showPageContent);
+</script>
 </body>
 </html>
