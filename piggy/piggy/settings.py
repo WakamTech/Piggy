@@ -124,10 +124,16 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LANGUAGE_CODE = "en-us"
-TIME_ZONE = "UTC"
+
+
+LANGUAGE_CODE = 'fr-FR'  # Or another language supporting accented characters
+TIME_ZONE = 'UTC'  # Or your desired timezone
 USE_I18N = True
+USE_L10N = True
 USE_TZ = True
+
+DEFAULT_CHARSET = 'utf-8'
+FILE_CHARSET = 'utf-8'
 
 STATIC_URL = '/static/'
 

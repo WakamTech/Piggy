@@ -496,6 +496,7 @@ class OrderListView(generics.ListAPIView):
 
         status = self.request.query_params.get('status', None)
         if status:
+            print("okokokok\n\n\n\n\n\n")
             return queryset.filter(status=status)
         return queryset
 
