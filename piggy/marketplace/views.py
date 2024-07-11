@@ -34,10 +34,8 @@ from firebase_admin import credentials, auth
 
 
 from django.shortcuts import render
-from django.contrib.auth.decorators import staff_member_required
 from .models import User, Ad, Order
 
-@staff_member_required
 def dashboard(request):
     # Statistiques des utilisateurs
     total_users = User.objects.count()
@@ -500,7 +498,7 @@ class OrderDeleteView(generics.DestroyAPIView):
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from django.db.models import Sum, 
+from django.db.models import Sum
 
 @api_view(['GET'])
 @permission_classes([IsAdminUser])
