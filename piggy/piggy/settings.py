@@ -95,16 +95,11 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
 
-#DATABASES = {
-#    'default': dj_database_url.config(default=DB_PATH)
-#}
+
+DATABASES = {
+    'default': dj_database_url.config(default=DB_PATH)
+}
 
 
 AUTH_USER_MODEL = 'marketplace.User'

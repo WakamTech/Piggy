@@ -348,65 +348,6 @@
     // Variables globales
 // ... (Your existing JavaScript code) ...
 
-
-// ... (Your other JavaScript code) ...
-
-
-
-    // Fonction pour gérer la connexion
-    async function login(phone, password) {
-        try {
-            showLoading();
-            const response = await fetch('/api/login/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ phone, password }),
-            });
-
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.error || 'Erreur lors de la connexion.');
-            }
-
-            const data = await response.json();
-            localStorage.setItem('token', data.token);
-            showAppContent();
-        } catch (error) {
-            const loginError = document.getElementById('loginError');
-            loginError.textContent = error.message;
-            loginError.style.display = 'block';
-        } finally {
-            hideLoading();
-        }
-    }
-
-    // Gestionnaire d'événements pour le formulaire de connexion
-    loginForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const phone = event.target.querySelector('#phone').value;
-        const password = event.target.querySelector('#password').value;
-        await login(phone, password); 
-    });
-
-    // Afficher le contenu de l'application après une authentification réussie
-    function showAppContent() {
-        loginPage.style.display = 'none';
-        appContent.style.display = 'block';
-        loadData();
-        showPageContent();
-    }
-
-    // Afficher la page de connexion en cas de déconnexion
-    function logout() {
-        localStorage.removeItem('token'); // Supprimer le token
-        loginPage.style.display = 'flex';
-        appContent.style.display = 'none';
-    }
-
-    // ... (Your existing JavaScript code) ...
-
 // Attach event listeners to navigation links
 const dashboardLink = document.querySelector('a[href="#dashboard"]');
 const usersLink = document.querySelector('a[href="#users"]');
@@ -457,6 +398,8 @@ function showPageContent(href) {
     } else {
         document.getElementById('dashboard').style.display = 'block';
     }
+    // Trigger hashchange event for correct behavior when clicking links
+    window.location.hash = page; // Manually update the hash
 }
 
 
