@@ -99,23 +99,24 @@
 </head>
 <body>
 
-    <!-- Page de connexion -->
-    <div id="loginPage">
-        <div class="login-form">
-            <h2>Connexion Administrateur</h2>
-            <form id="loginForm">
-                <div class="mb-3">
-                    <label for="username" class="form-label">Nom d'utilisateur:</label>
-                    <input type="text" class="form-control" id="username" required>
-                </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label">Mot de passe:</label>
-                    <input type="password" class="form-control" id="password" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Connexion</button>
-            </form>
-        </div>
+  <!-- Page de connexion -->
+  <div id="loginPage">
+    <div class="login-form">
+        <h2>Connexion Administrateur</h2>
+        <form id="loginForm">
+            <div class="mb-3">
+                <label for="phone" class="form-label">Numéro de téléphone:</label>
+                <input type="text" class="form-control" id="phone" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Mot de passe:</label>
+                <input type="password" class="form-control" id="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Connexion</button>
+            <div id="loginError" class="alert alert-danger mt-3" style="display: none;"></div>
+        </form>
     </div>
+</div>
 
     <!-- Contenu de l'application (initialement masqué) -->
     <div id="appContent" style="display:none;">
@@ -335,6 +336,41 @@
                 }, 500); // Simulation d'un délai de 500 ms
             });
         }
+
+        // Fonction pour gérer la connexion
+        async function login(phone, password) {
+            try {
+                const response = await fetch('/api/login/', { // Ajustez l'URL si nécessaire
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ phone, password }),
+                });
+
+                if (!response.ok) {
+                    const data = await response.json(); // Récupérez les détails de l'erreur
+                    throw new Error(data.error || 'Erreur lors de la connexion.');
+                }
+
+                const data = await response.json();
+                localStorage.setItem('token', data.token); // Stockez le token dans localStorage
+                showAppContent();
+            } catch (error) {
+                const loginError = document.getElementById('loginError');
+                loginError.textContent = error.message;
+                loginError.style.display = 'block';
+            }
+        }
+
+        // Gestionnaire d'événements pour le formulaire de connexion
+        loginForm.addEventListener('submit', async (event) => {
+            event.preventDefault(); 
+            const phone = event.target.querySelector('#phone').value;
+            const password = event.target.querySelector('#password').value;
+            await login(phone, password); // Appelez la fonction de connexion asynchrone
+        });
+
 
         // Afficher le contenu de l'application après une authentification réussie
         function showAppContent() {
