@@ -154,6 +154,8 @@ def login(request):
         token = AccessToken.for_user(user)
         print(f"Login successful for user: {user}")  # Debug: Affiche un message de succès
         return Response({"token": str(token)})
+    else : 
+        print("Failed\nFailed")
     print("Authentication failed")  # Debug: Affiche un message d'échec
     return Response({"error": "Informations d'identification incorrectes."}, status=status.HTTP_400_BAD_REQUEST)
 
