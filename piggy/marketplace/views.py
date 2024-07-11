@@ -432,6 +432,7 @@ class UserListView(generics.ListAPIView):
     permission_classes = [IsAdminUser]
 
     def get_queryset(self):
+        queryset = super().get_queryset()
         role = self.request.query_params.get('role', None)
         if role:
             return self.queryset.filter(role=role)
