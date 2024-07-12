@@ -8,7 +8,6 @@ const ordersTable = document.getElementById('ordersTable').getElementsByTagName(
 const totalUsersElement = document.getElementById('totalUsers');
 const totalAdsElement = document.getElementById('totalAds');
 const totalOrdersElement = document.getElementById('totalOrders');
-const totalRevenueElement = document.getElementById('totalRevenue');
 const confirmDeleteModal = document.getElementById('confirmDeleteModal');
 const confirmDeleteButton = document.getElementById('confirmDeleteButton');
 const confirmValidateModal = document.getElementById('confirmValidateModal');
@@ -17,6 +16,8 @@ const loadingElement = document.getElementById('loading');
 const logoutButton = document.getElementById('logoutButton');
 let itemIdToDelete; // Variable pour stocker l'ID de l'élément à supprimer
 let itemIdToValidate; // Variable pour stocker l'ID de l'élément à valider
+const revenueChartCanvas = document.getElementById('revenueChart').getContext('2d');
+
 
   // ... (Votre code existant)
 const priceRulesTable = document.getElementById('priceRulesTable').getElementsByTagName('tbody')[0];
@@ -367,7 +368,6 @@ confirmDeleteButton.addEventListener('click', () => {
 
 // ... votre code JavaScript ... 
  
-const revenueChartCanvas = document.getElementById('revenueChart').getContext('2d');
 
 function createRevenueChart(labels, data) {
   // Supprimer le graphique s'il existe déjà 
