@@ -251,7 +251,7 @@ class AdListCreateView(generics.ListCreateAPIView):
                 Location.objects.create(ad=serializer.instance, latitude=latitude, longitude=longitude, address=address)
 
 
-
+                
 class AdRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Ad.objects.all()
     serializer_class = AdSerializer
@@ -578,21 +578,24 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.db.models import Sum, F
 
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAdminUser
-from rest_framework.response import Response
-from django.db.models import Sum, F
-
 @api_view(['GET'])
 @permission_classes([IsAdminUser])
 def get_stats(request):
-    #... (calcul pour le revenue)
+    #print(request)
+    total_users = User.objects.count()
+    total_ads = Ad.objects.count()
+    total_orders = Order.objects.count()
 
-    # Calculate the current revenue based on 'accepted' orders 
+    # Calculate the total revenue based on delivered orders
+    revenue = Order.objects.filter(status='delivered').aggregate(
+        total_revenue=Sum(F('quantity') * F('ad__price_per_kg'))
+    )['total_revenue']
+
+     # Calculate the current revenue based on 'accepted' orders 
     current_revenue = Order.objects.filter(status='accepted').aggregate(
         total_current_revenue=Sum(F('quantity') * F('ad__price_per_kg')) 
     )['total_current_revenue']
-     # Exemple dans views.py 
+
     manager_revenue = 0
     for order in Order.objects.filter(status__in=['accepted', 'en_preparation', 'delivered']):
         price_difference = order.ad.price_per_kg - order.ad.initial_price_per_kg
@@ -602,7 +605,7 @@ def get_stats(request):
         "total_users": total_users,
         "total_ads": total_ads,
         "total_orders": total_orders,
-        "revenue": revenue or 0,  # existing revenue
+        "revenue": revenue or 0
         "current_revenue": current_revenue or 0  # new
         "manager_revenue" : manager_revenue
     })
