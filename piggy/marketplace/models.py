@@ -12,7 +12,7 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager, Group, Per
 import random
 from django.utils import timezone
 from datetime import timedelta
-
+from phonenumber_field.modelfields import PhoneNumberField
 
 
 import uuid
@@ -47,7 +47,7 @@ class User(AbstractUser):
         ('admin', 'Administrateur'),
     ]
 
-    phone = models.CharField(max_length=15, unique=True)
+    phone = PhoneNumberField(unique=True, null=False, blank=False)
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
     address = models.CharField(max_length=255, blank=True, null=True)
     full_name = models.CharField(max_length=255, blank=True, null=True)
