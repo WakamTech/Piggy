@@ -222,45 +222,112 @@ function updateOrdersTable(orders) {
     });
 }
 
-// Fonction pour mettre à jour le tableau des règles de prix
+// ... (Votre code existant) 
+
+// --- Modification pour l'affichage des règles --- 
 function updatePriceRulesTable(priceRules) {
-    priceRulesTable.innerHTML = '';
+    priceRulesTable.innerHTML = ''; 
     priceRules.forEach(rule => {
         const row = priceRulesTable.insertRow();
         row.insertCell().textContent = rule.id;
-        row.insertCell().textContent = rule.role; // Affiche 'Boucher' ou 'Acheteur'
+        row.insertCell().textContent = rule.role;
         row.insertCell().textContent = rule.min_price;
-        row.insertCell().textContent = rule.max_price; 
-        row.insertCell().textContent = rule.fixed_price || "-";
-        row.insertCell().textContent = rule.price_increase || "-";
-        row.insertCell().innerHTML = `
-        <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editPriceRuleModal" data-rule-id="${rule.id}"><i class="bi bi-pencil"></i></a>
-        <a href="#" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-item-id="${rule.id}" data-delete-url="/api/admin/price_rules/${rule.id}/delete/"><i class="bi bi-trash"></i></a>
-    `;
-
+        row.insertCell().textContent = rule.max_price || "Illimité"; // Affichage plus clair
+        row.insertCell().textContent = rule.price_increase_percentage ? rule.price_increase_percentage + "%" : "-"; //  Ajout du signe % 
+        row.insertCell().textContent = rule.fixed_price || "-"; 
+        row.insertCell().innerHTML = ` 
+            <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addPriceRuleModal"  
+                data-rule-id="${rule.id}" 
+                data-role="${rule.role}" 
+                data-min-price="${rule.min_price}"
+                data-max-price="${rule.max_price || ''}" 
+                data-percentage="${rule.price_increase_percentage || ''}"
+                data-fixed-price="${rule.fixed_price || ''}"
+            >
+                <i class="bi bi-pencil"></i>
+            </a>
+            <a href="#" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-item-id="${rule.id}" data-delete-url="/api/admin/price_rules/${rule.id}/delete/"><i class="bi bi-trash"></i></a>
+        `;
     });
 }
 
+// --- Gestion de la modal d'ajout/modification  ---
 
+const addPriceRuleModal = document.getElementById('addPriceRuleModal');
+const priceRuleForm = document.getElementById('priceRuleForm');
 
-  //  Charger les règles de prix
-    const priceRulesResponse = await fetch('/api/admin/price_rules/', {
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-    });
+addPriceRuleModal.addEventListener('show.bs.modal', (event) => {
+    const button = event.relatedTarget; 
+    const ruleId = button ? button.getAttribute('data-rule-id') : null; 
 
-    if (!priceRulesResponse.ok) {
-        throw new Error('Erreur lors du chargement des règles de prix.');
+    // Réinitialisation du formulaire
+    priceRuleForm.reset(); 
+    document.getElementById('ruleId').value = '';
+
+    // Si on modifie une règle existante
+    if (ruleId) {
+        document.getElementById('addPriceRuleModalLabel').textContent = "Modifier la Règle de Prix";
+        document.getElementById('ruleId').value = ruleId;
+
+        document.getElementById('role').value = button.getAttribute('data-role');
+        document.getElementById('min_price').value = button.getAttribute('data-min-price');
+        document.getElementById('max_price').value = button.getAttribute('data-max-price');
+        document.getElementById('price_increase_percentage').value = button.getAttribute('data-percentage');
+        document.getElementById('fixed_price').value = button.getAttribute('data-fixed-price'); 
+    } else {
+        document.getElementById('addPriceRuleModalLabel').textContent = "Ajouter une Règle de Prix"; 
     }
+});
 
-    const priceRulesData = await priceRulesResponse.json();
-    updatePriceRulesTable(priceRulesData);
+// Gestion de la soumission du formulaire
+priceRuleForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
 
-  // ... (Reste de votre code)
+    const ruleId = document.getElementById('ruleId').value; 
+    const method = ruleId ? 'PUT' : 'POST'; 
+    const endpoint = ruleId ? `/api/admin/price_rules/${ruleId}/` : '/api/admin/price_rules/'; 
+    
+    // Créer l'objet data pour la requête fetch
+    const data = {
+        role: document.getElementById('role').value,
+        min_price: parseInt(document.getElementById('min_price').value, 10),
+        max_price: document.getElementById('max_price').value ? parseInt(document.getElementById('max_price').value, 10) : null,
+        price_increase_percentage: parseFloat(document.getElementById('price_increase_percentage').value) || null, // Utilise parseFloat et vérifie si NaN
+        fixed_price: document.getElementById('fixed_price').value ? parseInt(document.getElementById('fixed_price').value, 10) : null
+    };
+    console.log("Data being sent",data)
+
+    try {
+        const response = await fetch(endpoint, { 
+            method: method, 
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data), 
+        });
+        console.log(response)
+
+        if (response.ok) {
+            // Fermer le modal
+            bootstrap.Modal.getInstance(addPriceRuleModal).hide(); 
+
+            // Recharger les données
+            loadData();
+        } else {
+            // Gestion des erreurs 
+            const errorData = await response.json(); 
+            console.error('Erreur serveur :', errorData);  
+        }
+    } catch (error) {
+        // Gestion des erreurs réseau ou autres 
+        console.error('Erreur :', error);  
+    }
+});
 
 
 
+// ... (Reste de votre code)
 // Mettre à jour les statistiques du tableau de bord
 function updateDashboardStats(data) {
     totalUsersElement.textContent = data.total_users;

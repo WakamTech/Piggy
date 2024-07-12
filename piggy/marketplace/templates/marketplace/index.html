@@ -270,8 +270,8 @@
                                         <th>Rôle</th>
                                         <th>Prix Min</th>
                                         <th>Prix Max</th>
+                                        <th>Pourcentage d'Augmentation</th> 
                                         <th>Prix Fixe</th>
-                                        <th>Augmentation</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -285,20 +285,48 @@
                         </button>
                     </div>
 
-                    <!-- Modal d'ajout de règle de prix -->
+                    <!-- Modal d'ajout/modification de règle de prix -->
                     <div class="modal fade" id="addPriceRuleModal" tabindex="-1" aria-labelledby="addPriceRuleModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="addPriceRuleModalLabel">Ajouter une Règle de Prix</h5>
+                                    <h5 class="modal-title" id="addPriceRuleModalLabel">Ajouter une Règle de Prix</h5> 
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <!-- Formulaire d'ajout -->
+                                    <form id="priceRuleForm"> 
+                                        <input type="hidden" id="ruleId">  
+                                        <!-- Champ caché pour l'ID lors de la modification -->
+
+                                        <div class="mb-3">
+                                            <label for="role" class="form-label">Rôle</label>
+                                            <select class="form-select" id="role" name="role">
+                                                <option value="butcher">Boucher</option>
+                                                <option value="buyer">Acheteur</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="min_price" class="form-label">Prix Minimum</label>
+                                            <input type="number" class="form-control" id="min_price" name="min_price" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="max_price" class="form-label">Prix Maximum (Laissez vide pour illimité)</label>
+                                            <input type="number" class="form-control" id="max_price" name="max_price">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="price_increase_percentage" class="form-label">Pourcentage d'Augmentation (%)</label>
+                                            <input type="number" step="0.01" class="form-control" id="price_increase_percentage" name="price_increase_percentage"> 
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="fixed_price" class="form-label">Prix Fixe (Laissez vide si non applicable)</label>
+                                            <input type="number" class="form-control" id="fixed_price" name="fixed_price">
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Enregistrer</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> 
                 </div>
             </div>
         </div>
