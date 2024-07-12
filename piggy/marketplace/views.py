@@ -200,8 +200,33 @@ class AdListCreateView(generics.ListCreateAPIView):
     serializer_class = AdSerializer
     permission_classes = [IsAuthenticated]
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+     # Obtenir le prix de l'annonce
+        price = self.request.data.get('price_per_kg')
+        
+        # Vérifier le role de l'utilisateur et appliquer les règles de prix
+        user = self.request.user
+        role = user.role 
+
+        if role == 'butcher':
+            new_price = price + 200 
+        if role == 'buyer':
+            new_price = price 
+        elif price >= 1300 and price <= 1599:
+            new_price = 1900
+        elif price >= 1600 and price <= 1849:
+            new_price = 2100
+        elif price >= 1850 and price <= 1999:
+            new_price = 2200
+        elif price >= 2000 and price <= 2500:
+            new_price = price + 250
+        elif price > 2500:
+            new_price = price + 250
+        else:
+            new_price = price
+            
+        # Enregistrer l'annonce avec le prix ajusté 
+        serializer.save(user=self.request.user, price_per_kg=new_price)
+
         address = self.request.data.get('address')
         if address:
             latitude, longitude = geocode_address(address)
