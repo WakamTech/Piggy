@@ -202,12 +202,13 @@ class AdListCreateView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         # Obtenir le prix de l'annonce
-        print("Creation\n\n\n")
         price = self.request.data.get('price_per_kg')
+        print("Creation\n\n\n")
+        print(price)
+
         
         # Vérifier le role de l'utilisateur et appliquer les règles de prix
-        user = self.request.user
-        role = user.role 
+        role = self.request.data.get('type')
 
         if role == 'butcher':
             new_price = price + 200 
