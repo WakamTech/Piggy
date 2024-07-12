@@ -96,6 +96,7 @@ class Ad(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
+    initial_price_per_kg = models.IntegerField(default=0) # Nouveau champ
     type = models.CharField(max_length=10, choices=TYPE_CHOICES, default='farmer')
 
 

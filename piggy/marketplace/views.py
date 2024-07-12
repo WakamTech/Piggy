@@ -206,6 +206,7 @@ class AdListCreateView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         price = self.request.data.get('price_per_kg')
+        initial_price = price  # Enregistrer le prix initia
         role = self.request.data.get('type')
 
         try:
@@ -241,7 +242,7 @@ class AdListCreateView(generics.ListCreateAPIView):
                     new_price = price + 250
 
         # Enregistrer l'annonce avec le prix ajusté
-        serializer.save(user=self.request.user, price_per_kg=new_price)
+        serializer.save(user=self.request.user, price_per_kg=new_price, initial_price_per_kg=initial_price)
 
         address = self.request.data.get('address')
         if address:
@@ -591,6 +592,11 @@ def get_stats(request):
     current_revenue = Order.objects.filter(status='accepted').aggregate(
         total_current_revenue=Sum(F('quantity') * F('ad__price_per_kg')) 
     )['total_current_revenue']
+     # Exemple dans views.py 
+    manager_revenue = 0
+    for order in Order.objects.filter(status__in=['accepted', 'en_preparation', 'delivered']):
+    price_difference = order.ad.price_per_kg - order.ad.initial_price_per_kg
+    manager_revenue += price_difference * order.quantity
 
     return Response({
         "total_users": total_users,
@@ -598,6 +604,7 @@ def get_stats(request):
         "total_orders": total_orders,
         "revenue": revenue or 0,  # existing revenue
         "current_revenue": current_revenue or 0  # new
+        "manager_revenue" : manager_revenue
     })
 
 from rest_framework.decorators import api_view
