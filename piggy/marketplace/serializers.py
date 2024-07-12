@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Ad, Location, DeliveryFee, Butchery, Order, Notification, Review, Cart, OTP
+from .models import User, PriceRule, Ad, Location, DeliveryFee, Butchery, Order, Notification, Review, Cart, OTP
 from rest_framework import generics
 from rest_framework import serializers
 from .models import Config
