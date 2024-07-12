@@ -595,8 +595,8 @@ def get_stats(request):
      # Exemple dans views.py 
     manager_revenue = 0
     for order in Order.objects.filter(status__in=['accepted', 'en_preparation', 'delivered']):
-    price_difference = order.ad.price_per_kg - order.ad.initial_price_per_kg
-    manager_revenue += price_difference * order.quantity
+        price_difference = order.ad.price_per_kg - order.ad.initial_price_per_kg
+        manager_revenue += price_difference * order.quantity
 
     return Response({
         "total_users": total_users,
