@@ -213,7 +213,7 @@ class AdListCreateView(generics.ListCreateAPIView):
             rule = PriceRule.objects.get(role=role, min_price__lte=price, max_price__gte=price)
            
             if rule.fixed_price is not None:
-                new_price = rule.fixed_price
+                new_price = price + rule.fixed_price
             elif rule.price_increase_percentage:
                 increase_amount = price * (rule.price_increase_percentage / 100) 
                 new_price = price + increase_amount 
