@@ -10,7 +10,7 @@ import dj_database_url
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get('SECRET_KEY', "django-insecure-9$f)szk-3$+lrq__0rjxq+jab7q&8wq%jt0l7n^ayos7o^r#8b")
-
+GOOGLE_APPLICATION_CREDENTIALS = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
 DEBUG = bool(os.environ.get('DEBUG', True))
 DB_PATH = os.environ.get('DB_PATH', '')
 ALLOWED_HOSTS = ['.herokuapp.com', 'localhost', '127.0.0.1']
