@@ -18,7 +18,9 @@ from django.contrib.admin.views.decorators import staff_member_required
 logger = logging.getLogger(__name__)
 
 from .serializers import ConfigSerializer
-
+from rest_framework import generics
+from .models import PriceRule
+from .serializers import PriceRuleSerializer
 
 import os
 
@@ -203,10 +205,8 @@ class AdListCreateView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         # Obtenir le prix de l'annonce
         price = self.request.data.get('price_per_kg')
-        
         # Vérifier le role de l'utilisateur et appliquer les règles de prix
         role = self.request.data.get('type')
-
 
         try:
             # Trouver la règle de prix applicable 
@@ -624,9 +624,7 @@ def get_nearby_buyers_ads(request):
     return Response(serializer.data)
 
 
-from rest_framework import generics
-from .models import PriceRule
-from .serializers import PriceRuleSerializer
+
 # ...
 
 class PriceRuleListView(generics.ListCreateAPIView):
