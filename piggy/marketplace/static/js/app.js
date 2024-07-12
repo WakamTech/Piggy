@@ -485,6 +485,19 @@ async function loadData() {
 
         const ordersData = await ordersResponse.json();
         updateOrdersTable(ordersData);
+
+        const priceRulesResponse = await fetch('/api/admin/price_rules/', {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`, 
+            }, 
+        }); 
+
+        if (!priceRulesResponse.ok) {
+            throw new Error('Erreur lors du chargement des règles de prix.');
+        }
+
+        const priceRulesData = await priceRulesResponse.json(); 
+        updatePriceRulesTable(priceRulesData); // Met à jour le tableau HTML
     } catch (error) {
         console.error('Erreur:', error);
     } finally {
