@@ -225,7 +225,7 @@ class AdListCreateView(generics.ListCreateAPIView):
            # Gérer le cas où aucune règle n'est trouvée - prix par défaut
             new_price = price 
             if role == 'butcher':
-            new_price = price + 200 
+                new_price = price + 200 
             if role == 'buyer':
                 new_price = price 
             elif price >= 1300 and price <= 1599:
