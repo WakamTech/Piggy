@@ -146,7 +146,7 @@ class Order(models.Model):
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    #livraison = models.CharField(max_length=255, default='Not defined')
+    livraison = models.CharField(max_length=255, default='Not defined')
 
     def __str__(self):
         return f"Order {self.id} by {self.user.username}"
