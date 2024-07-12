@@ -87,3 +87,8 @@ class ConfigSerializer(serializers.ModelSerializer):
     class Meta:
         model = Config
         fields = ['key', 'value']
+
+class PriceRuleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PriceRule
+        fields = '__all__' # Ou spécifiez les champs à exposer

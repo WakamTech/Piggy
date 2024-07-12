@@ -178,7 +178,6 @@ class Cart(models.Model):
     def __str__(self):
         return f"Cart for {self.user.username}"
 
-
 class OTP(models.Model):
     phone = models.CharField(max_length=15)
     code = models.CharField(max_length=6)
@@ -197,3 +196,15 @@ class Config(models.Model):
 
     def __str__(self):
         return self.key
+
+
+
+class PriceRule(models.Model):
+    role = models.CharField(max_length=255, choices=[
+        ('butcher', 'Boucher'),
+        ('buyer', 'Acheteur'),
+    ])
+    min_price = models.IntegerField(default=0) 
+    max_price = models.IntegerField(blank=True, null=True)  # Si aucune limite supérieure, null
+    fixed_price = models.IntegerField(blank=True, null=True)  # Un prix fixe à appliquer 
+    price_increase = models.IntegerField(default=0)  # Augmentation à appliquer si prix dans la plage

@@ -219,6 +219,43 @@ function updateOrdersTable(orders) {
     });
 }
 
+// Fonction pour mettre à jour le tableau des règles de prix
+function updatePriceRulesTable(priceRules) {
+    priceRulesTable.innerHTML = '';
+    priceRules.forEach(rule => {
+        const row = priceRulesTable.insertRow();
+        row.insertCell().textContent = rule.id;
+        row.insertCell().textContent = rule.role; // Affiche 'Boucher' ou 'Acheteur'
+        row.insertCell().textContent = rule.min_price;
+        row.insertCell().textContent = rule.max_price; 
+        row.insertCell().textContent = rule.fixed_price || "-";
+        row.insertCell().textContent = rule.price_increase || "-";
+        row.insertCell().innerHTML = `
+        <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editPriceRuleModal" data-rule-id="${rule.id}"><i class="bi bi-pencil"></i></a>
+        <a href="#" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-item-id="${rule.id}" data-delete-url="/api/admin/price_rules/${rule.id}/delete/"><i class="bi bi-trash"></i></a>
+    `;
+
+    });
+}
+
+
+
+  //  Charger les règles de prix
+    const priceRulesResponse = await fetch('/api/admin/price_rules/', {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+    });
+
+    if (!priceRulesResponse.ok) {
+        throw new Error('Erreur lors du chargement des règles de prix.');
+    }
+
+    const priceRulesData = await priceRulesResponse.json();
+    updatePriceRulesTable(priceRulesData);
+
+  // ... (Reste de votre code)
+
 
 
 // Mettre à jour les statistiques du tableau de bord

@@ -258,9 +258,46 @@
                     </div>
 
                     <!-- Paramètres -->
+                    <!-- Paramètres -->
                     <div id="settings" style="display: none;">
                         <h2>Paramètres</h2>
-                        <p>Page des paramètres à venir.</p>
+                        <h3>Règles de prix</h3>
+                        <div class="table-container">
+                            <table class="table table-striped" id="priceRulesTable">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Rôle</th>
+                                        <th>Prix Min</th>
+                                        <th>Prix Max</th>
+                                        <th>Prix Fixe</th>
+                                        <th>Augmentation</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Les règles de prix seront affichées ici -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPriceRuleModal">
+                            Ajouter une Règle
+                        </button>
+                    </div>
+
+                    <!-- Modal d'ajout de règle de prix -->
+                    <div class="modal fade" id="addPriceRuleModal" tabindex="-1" aria-labelledby="addPriceRuleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="addPriceRuleModalLabel">Ajouter une Règle de Prix</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <!-- Formulaire d'ajout -->
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

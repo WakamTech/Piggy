@@ -203,32 +203,49 @@ class AdListCreateView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         # Obtenir le prix de l'annonce
         price = self.request.data.get('price_per_kg')
-        print("Creation\n\n\n")
-        print(price)
-
         
         # Vérifier le role de l'utilisateur et appliquer les règles de prix
         role = self.request.data.get('type')
 
-        if role == 'butcher':
-            new_price = price + 200 
-        if role == 'buyer':
-            new_price = price 
-        elif price >= 1300 and price <= 1599:
-            new_price = 1900
-        elif price >= 1600 and price <= 1849:
-            new_price = 2100
-        elif price >= 1850 and price <= 1999:
-            new_price = 2200
-        elif price >= 2000 and price <= 2500:
-            new_price = price + 250
-        elif price > 2500:
-            new_price = price + 250
-        else:
-            new_price = price
+
+        try:
+            # Trouver la règle de prix applicable 
+            rule = PriceRule.objects.get(role=role, min_price__lte=price, max_price__gte=price) # Corriger la requête
+
+            # Appliquer la règle de prix
+            if rule.fixed_price is not None: 
+               new_price = rule.fixed_price 
+            else:
+               new_price = price + rule.price_increase
+
+            serializer.save(user=self.request.user, price_per_kg=new_price) 
             
-        # Enregistrer l'annonce avec le prix ajusté 
-        serializer.save(user=self.request.user, price_per_kg=new_price)
+
+        except PriceRule.DoesNotExist:
+           # Gérer le cas où aucune règle n'est trouvée - prix par défaut
+            new_price = price 
+            if role == 'butcher':
+            new_price = price + 200 
+            if role == 'buyer':
+                new_price = price 
+            elif price >= 1300 and price <= 1599:
+                new_price = 1900
+            elif price >= 1600 and price <= 1849:
+                new_price = 2100
+            elif price >= 1850 and price <= 1999:
+                new_price = 2200
+            elif price >= 2000 and price <= 2500:
+                new_price = price + 250
+            elif price > 2500:
+                new_price = price + 250
+            else:
+                new_price = price
+            
+            # Enregistrer l'annonce avec le prix ajusté 
+            serializer.save(user=self.request.user, price_per_kg=new_price)
+
+
+        
 
         address = self.request.data.get('address')
         if address:
@@ -605,3 +622,14 @@ def get_nearby_buyers_ads(request):
     ads = Ad.objects.filter(type='buyer')
     serializer = AdSerializer(ads, many=True)
     return Response(serializer.data)
+
+
+from rest_framework import generics
+from .models import PriceRule
+from .serializers import PriceRuleSerializer
+# ...
+
+class PriceRuleListView(generics.ListAPIView):
+    queryset = PriceRule.objects.all()
+    serializer_class = PriceRuleSerializer
+    permission_classes = [IsAdminUser] 
