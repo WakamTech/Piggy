@@ -210,16 +210,15 @@ class AdListCreateView(generics.ListCreateAPIView):
 
         try:
             # Trouver la règle de prix applicable 
-            rule = PriceRule.objects.get(role=role, min_price__lte=price, max_price__gte=price) # Corriger la requête
-
-            # Appliquer la règle de prix
-            if rule.fixed_price is not None: 
-               new_price = rule.fixed_price 
+            rule = PriceRule.objects.get(role=role, min_price__lte=price, max_price__gte=price)
+           
+            if rule.fixed_price is not None:
+                new_price = rule.fixed_price
+            elif rule.price_increase_percentage:
+                increase_amount = price * (rule.price_increase_percentage / 100) 
+                new_price = price + increase_amount 
             else:
-               new_price = price + rule.price_increase
-
-            serializer.save(user=self.request.user, price_per_kg=new_price) 
-            
+                new_price = price             
 
         except PriceRule.DoesNotExist:
            # Gérer le cas où aucune règle n'est trouvée - prix par défaut
@@ -242,7 +241,7 @@ class AdListCreateView(generics.ListCreateAPIView):
                 new_price = price
             
             # Enregistrer l'annonce avec le prix ajusté 
-            serializer.save(user=self.request.user, price_per_kg=new_price)
+        serializer.save(user=self.request.user, price_per_kg=new_price)
 
 
         

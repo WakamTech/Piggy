@@ -18,6 +18,9 @@ const logoutButton = document.getElementById('logoutButton');
 let itemIdToDelete; // Variable pour stocker l'ID de l'élément à supprimer
 let itemIdToValidate; // Variable pour stocker l'ID de l'élément à valider
 
+  // ... (Votre code existant)
+const priceRulesTable = document.getElementById('priceRulesTable').getElementsByTagName('tbody')[0];
+
 // Fonction pour gérer la connexion
 async function login(phone, password) {
     try {

@@ -199,12 +199,17 @@ class Config(models.Model):
 
 
 
+from django.db import models
+
 class PriceRule(models.Model):
     role = models.CharField(max_length=255, choices=[
         ('butcher', 'Boucher'),
         ('buyer', 'Acheteur'),
     ])
-    min_price = models.IntegerField(default=0) 
-    max_price = models.IntegerField(blank=True, null=True)  # Si aucune limite supérieure, null
-    fixed_price = models.IntegerField(blank=True, null=True)  # Un prix fixe à appliquer 
-    price_increase = models.IntegerField(default=0)  # Augmentation à appliquer si prix dans la plage
+    min_price = models.IntegerField(default=0)
+    max_price = models.IntegerField(blank=True, null=True)
+    price_increase_percentage = models.FloatField(blank=True, null=True) # Pourcentage
+    fixed_price = models.IntegerField(blank=True, null=True) 
+
+    def __str__(self):
+        return f"Règle pour {self.get_role_display()} (de {self.min_price} à {'Illimité' if self.max_price is None else self.max_price})"
