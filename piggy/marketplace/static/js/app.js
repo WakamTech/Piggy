@@ -369,35 +369,6 @@ confirmDeleteButton.addEventListener('click', () => {
 // ... votre code JavaScript ... 
  
 
-function createRevenueChart(labels, data) {
-  // Supprimer le graphique s'il existe déjà 
-  if (window.revenueChart instanceof Chart) {
-    window.revenueChart.destroy();
-  }
- 
-  // Création du graphique avec Chart.js 
-  window.revenueChart = new Chart(revenueChartCanvas, { 
-    type: 'line', // Ou 'bar', 'pie', etc., selon le type de graphique souhaité
-    data: {
-        labels: labels, 
-        datasets: [{ 
-            label: 'Revenu total',
-            data: data, 
-            backgroundColor: 'rgba(54, 162, 235, 0.2)', 
-            borderColor: 'rgba(54, 162, 235, 1)', 
-            borderWidth: 1
-        }]
-    }, 
-    // Configuration des options du graphique (axe des abscisses, titre, etc.)
-    options: { 
-      scales: { 
-        y: { 
-          beginAtZero: true
-        }
-      } 
-    } 
-  }); 
-} 
 
 async function deleteItem(deleteUrl) {
     try {
