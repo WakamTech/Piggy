@@ -471,7 +471,21 @@ class AdListView(generics.ListAPIView):
             return queryset.filter(is_active=False)
         return queryset
 
+@api_view(['PATCH'])
+@permission_classes([IsAdminUser])
+def update_order_status(request, order_id):
+    try:
+        order = Order.objects.get(id=order_id)
+    except Order.DoesNotExist:
+        return Response({'error': 'Commande non trouvée.'}, status=status.HTTP_404_NOT_FOUND)
 
+    new_status = request.data.get('status')
+    if new_status not in [choice[0] for choice in Order.STATUS_CHOICES]:
+        return Response({'error': 'Statut non valide.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    order.status = new_status
+    order.save()
+    return Response({'success': 'Statut de la commande mis à jour.'}, status=status.HTTP_200_OK) 
 class AdValidateView(APIView):
     permission_classes = [IsAdminUser]
 

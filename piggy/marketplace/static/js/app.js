@@ -144,6 +144,49 @@ function updateAdsTable(ads) {
     });
 }
 
+// Variables globales
+let orderIdToEdit; // Variable pour stocker l'ID de la commande à modifier
+
+// Gérer la modification du statut d'une commande
+const editOrderStatusModal = document.getElementById('editOrderStatusModal');
+const editOrderStatusForm = document.getElementById('editOrderStatusForm');
+
+editOrderStatusModal.addEventListener('show.bs.modal', event => {
+    const button = event.relatedTarget;
+    orderIdToEdit = button.getAttribute('data-order-id');
+    const currentStatus = button.getAttribute('data-current-status');
+    const statusSelect = document.getElementById('orderStatus');
+    statusSelect.value = currentStatus;
+});
+
+editOrderStatusForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const newStatus = document.getElementById('orderStatus').value;
+    try {
+        const response = await fetch(`/api/admin/orders/${orderIdToEdit}/update-status/`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ status: newStatus }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Erreur lors de la mise à jour du statut.');
+        }
+
+        // Mise à jour réussie, mettre à jour le tableau des commandes
+        loadData();
+
+        // Masquer la modal
+        const modalInstance = bootstrap.Modal.getInstance(editOrderStatusModal);
+        modalInstance.hide();
+    } catch (error) {
+        console.error('Erreur:', error);
+    }
+});
+
 // Mettre à jour le tableau des commandes
 function updateOrdersTable(orders) {
     ordersTable.innerHTML = '';
@@ -163,10 +206,13 @@ function updateOrdersTable(orders) {
         statusCell.textContent = order.status;
         actionsCell.innerHTML = `
             <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editOrderModal" data-order-id="${order.id}"><i class="bi bi-pencil"></i></a>
+            <a href="#" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#editOrderStatusModal" data-order-id="${order.id}" data-current-status="${order.status}"><i class="bi bi-arrow-repeat"></i></a>
             <a href="#" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-item-id="${order.id}" data-delete-url="/api/admin/orders/${order.id}/delete/"><i class="bi bi-trash"></i></a>
         `;
     });
 }
+
+
 
 // Mettre à jour les statistiques du tableau de bord
 function updateDashboardStats(data) {

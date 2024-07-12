@@ -228,6 +228,33 @@
                         </div>
                     </div>
 
+                    <!-- Modal for Editing Order Status -->
+                    <div class="modal fade" id="editOrderStatusModal" tabindex="-1" aria-labelledby="editOrderStatusModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="editOrderStatusModalLabel">Modifier le Statut de la Commande</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="editOrderStatusForm">
+                                        <div class="mb-3">
+                                            <label for="orderStatus" class="form-label">Statut</label>
+                                            <select id="orderStatus" class="form-select">
+                                                <option value="pending">En attente</option>
+                                                <option value="accepted">Acceptée</option>
+                                                <option value="rejected">Rejetée</option>
+                                                <option value="delivered">Livrée</option>
+                                                <option value="cancelled">Annulée</option>
+                                            </select>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Enregistrer</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Paramètres -->
                     <div id="settings" style="display: none;">
                         <h2>Paramètres</h2>
