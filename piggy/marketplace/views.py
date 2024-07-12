@@ -200,11 +200,6 @@ class AdListCreateView(generics.ListCreateAPIView):
     serializer_class = AdSerializer
     permission_classes = [IsAuthenticated]
 
-     class AdListCreateView(generics.ListCreateAPIView):
-    queryset = Ad.objects.all()
-    serializer_class = AdSerializer
-    permission_classes = [IsAuthenticated]
-
     def perform_create(self, serializer):
         # Obtenir le prix de l'annonce
         print("Creation")
