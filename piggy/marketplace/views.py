@@ -402,6 +402,7 @@ class IsAdminUser(permissions.BasePermission):
 
 
 @api_view(['GET'])
+@permission_classes([])  # Cette ligne permet l'accès sans authentification
 def dashboard(request):
     # Statistiques des utilisateurs
     total_users = User.objects.count()
