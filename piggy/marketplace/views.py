@@ -43,34 +43,6 @@ def is_admin(user):
     return user.groups.filter(name='Administrateurs').exists()
 
 
-def dashboard(request):
-    # Statistiques des utilisateurs
-    total_users = User.objects.count()
-    active_users = User.objects.filter(is_active=True).count()
-
-    # Statistiques des annonces
-    total_ads = Ad.objects.count()
-    active_ads = Ad.objects.filter(is_active=True).count()
-
-    # Statistiques des commandes
-    total_orders = Order.objects.count()
-    pending_orders = Order.objects.filter(status='pending').count()
-    delivered_orders = Order.objects.filter(status='delivered').count()
-
-    # Préparation du contexte pour le template
-    context = {
-        'total_users': total_users,
-        'active_users': active_users,
-        'total_ads': total_ads,
-        'active_ads': active_ads,
-        'total_orders': total_orders,
-        'pending_orders': pending_orders,
-        'delivered_orders': delivered_orders
-    }
-    
-    return render(request, 'marketplace/index.html', context)
-
-
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_configs(request):
@@ -427,6 +399,38 @@ from .serializers import UserSerializer, AdSerializer, OrderSerializer
 class IsAdminUser(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.user and request.user.is_authenticated and request.user.role == 'admin'
+
+
+@api_view(['GET'])
+@permission_classes([IsAdminUser])
+def dashboard(request):
+    # Statistiques des utilisateurs
+    total_users = User.objects.count()
+    active_users = User.objects.filter(is_active=True).count()
+
+    # Statistiques des annonces
+    total_ads = Ad.objects.count()
+    active_ads = Ad.objects.filter(is_active=True).count()
+
+    # Statistiques des commandes
+    total_orders = Order.objects.count()
+    pending_orders = Order.objects.filter(status='pending').count()
+    delivered_orders = Order.objects.filter(status='delivered').count()
+
+    # Préparation du contexte pour le template
+    context = {
+        'total_users': total_users,
+        'active_users': active_users,
+        'total_ads': total_ads,
+        'active_ads': active_ads,
+        'total_orders': total_orders,
+        'pending_orders': pending_orders,
+        'delivered_orders': delivered_orders
+    }
+    
+    return render(request, 'marketplace/index.html', context)
+
+
 
 # User Management
 class UserListView(generics.ListAPIView):
