@@ -236,18 +236,25 @@ function updatePriceRulesTable(priceRules) {
         row.insertCell().textContent = rule.price_increase_percentage ? rule.price_increase_percentage + "%" : "-"; //  Ajout du signe % 
         row.insertCell().textContent = rule.fixed_price || "-"; 
         row.insertCell().innerHTML = ` 
-            <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addPriceRuleModal"  
-                data-rule-id="${rule.id}" 
-                data-role="${rule.role}" 
-                data-min-price="${rule.min_price}"
-                data-max-price="${rule.max_price || ''}" 
-                data-percentage="${rule.price_increase_percentage || ''}"
-                data-fixed-price="${rule.fixed_price || ''}"
-            >
-                <i class="bi bi-pencil"></i>
-            </a>
-            <a href="#" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-item-id="${rule.id}" data-delete-url="/api/admin/price_rules/${rule.id}/delete/"><i class="bi bi-trash"></i></a>
-        `;
+        <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addPriceRuleModal"  
+            data-rule-id="${rule.id}" 
+            data-role="${rule.role}" 
+            data-min-price="${rule.min_price}"
+            data-max-price="${rule.max_price || ''}" 
+            data-percentage="${rule.price_increase_percentage || ''}"
+            data-fixed-price="${rule.fixed_price || ''}"
+        >
+            <i class="bi bi-pencil"></i>
+        </a>
+
+        <!-- Lien de suppression : -->
+        <a href="#" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" 
+            data-item-id="${rule.id}" 
+            data-delete-url="/api/admin/price_rules/${rule.id}/delete/"  
+        >
+            <i class="bi bi-trash"></i>
+        </a>
+    `;
     });
 }
 

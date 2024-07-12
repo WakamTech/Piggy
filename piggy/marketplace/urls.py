@@ -4,7 +4,7 @@ from .views import (
     UserListView, UserUpdateView, UserRetrieveView, UserDeleteView, UserAdsListView,  UserOrdersListView, 
     AdListView, AdValidateView, AdDeleteView, ButcheryAdsListView,UserOrderListView, UserOrderDetailView, 
     OrderListView, OrderUpdateView, PriceRuleListView, OrderDeleteView, UserNotificationsView, save_fcm_token, update_order_status,
-    get_stats, get_configs, add_to_cart, get_user_cart, CurrentUserView, get_nearby_farmers_ads, get_nearby_buyers_ads
+    get_stats, get_configs, add_to_cart, get_user_cart, CurrentUserView, get_nearby_farmers_ads, get_nearby_buyers_ads, PriceRuleDeleteView
 )
 
 urlpatterns = [
@@ -59,4 +59,5 @@ urlpatterns = [
     path('save_fcm_token/', save_fcm_token, name='save_fcm_token'),
     path('admin/orders/<int:order_id>/update-status/', update_order_status, name='update_order_status'),
     path('admin/price_rules/', PriceRuleListView.as_view(), name='price-rule-list'),
+     path('admin/price_rules/<int:pk>/delete/', PriceRuleDeleteView.as_view(), name='price-rule-delete'), 
 ]

@@ -636,3 +636,10 @@ class PriceRuleListView(generics.ListCreateAPIView):
     def create(self, request, *args, **kwargs):
             print("Données reçues dans la vue create():", request.data)
             return super().create(request, *args, **kwargs)
+from rest_framework import generics
+#... vos autres imports
+
+class PriceRuleDeleteView(generics.DestroyAPIView):
+    queryset = PriceRule.objects.all()
+    serializer_class = PriceRuleSerializer  # Optionnel, mais peut être utile pour la validation 
+    permission_classes = [IsAdminUser] 
