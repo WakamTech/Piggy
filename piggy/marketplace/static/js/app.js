@@ -311,7 +311,7 @@ async function validateAd(validateUrl) {
 async function loadData() {
     try {
         loadingElement.style.display = 'block';
-        const response = await fetch('/api/admin/dashboard/', {
+        const response = await fetch('/api/dashboard/', {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 'Content-Type': 'application/json',
