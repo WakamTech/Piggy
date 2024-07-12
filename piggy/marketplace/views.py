@@ -402,7 +402,6 @@ class IsAdminUser(permissions.BasePermission):
 
 
 @api_view(['GET'])
-@permission_classes([IsAdminUser])
 def dashboard(request):
     # Statistiques des utilisateurs
     total_users = User.objects.count()
