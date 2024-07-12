@@ -8,6 +8,7 @@ const ordersTable = document.getElementById('ordersTable').getElementsByTagName(
 const totalUsersElement = document.getElementById('totalUsers');
 const totalAdsElement = document.getElementById('totalAds');
 const totalOrdersElement = document.getElementById('totalOrders');
+const totalRevenueElement = document.getElementById('totalRevenue');
 const confirmDeleteModal = document.getElementById('confirmDeleteModal');
 const confirmDeleteButton = document.getElementById('confirmDeleteButton');
 const confirmValidateModal = document.getElementById('confirmValidateModal');
@@ -16,8 +17,6 @@ const loadingElement = document.getElementById('loading');
 const logoutButton = document.getElementById('logoutButton');
 let itemIdToDelete; // Variable pour stocker l'ID de l'élément à supprimer
 let itemIdToValidate; // Variable pour stocker l'ID de l'élément à valider
-const revenueChartCanvas = document.getElementById('revenueChart').getContext('2d');
-
 
   // ... (Votre code existant)
 const priceRulesTable = document.getElementById('priceRulesTable').getElementsByTagName('tbody')[0];
@@ -366,10 +365,6 @@ confirmDeleteButton.addEventListener('click', () => {
         .catch(error => console.error(error));
 });
 
-// ... votre code JavaScript ... 
- 
-
-
 async function deleteItem(deleteUrl) {
     try {
         const response = await fetch(deleteUrl, {
@@ -511,18 +506,7 @@ async function loadData() {
         const priceRulesData = await priceRulesResponse.json(); 
         updatePriceRulesTable(priceRulesData); // Met à jour le tableau HTML
 
-        // -- Préparation des données pour le graphique des revenus -- 
-        const revenueLabels = []; // Dates (par exemple)
-        const revenueData = [];  // Montants des revenus
-
-        // ---  Supposons que statsData contienne des données historiques :  --- 
-        statsData.forEach(stat => { 
-        revenueLabels.push(stat.date);  // Remplacez 'date' par le nom de champ de votre backend
-        revenueData.push(stat.revenue); //  Remplacez 'revenue' 
-        });
-
-        // Créer le graphique (voir l'étape 3)
-        createRevenueChart(revenueLabels, revenueData); 
+        
     } catch (error) {
         console.error('Erreur:', error);
     } finally {
