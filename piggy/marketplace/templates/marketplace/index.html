@@ -6,132 +6,28 @@
     <title>PiggyMarket - Administration</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
-    <style>
-        /* Styles personnalisés */
-        body {
-            background-color: #f8f9fa;
-        }
-
-        .sidebar {
-            background-color: #343a40;
-            color: #fff;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 250px;
-            padding-top: 60px;
-        }
-
-        .sidebar a {
-            color: #fff;
-            padding: 15px 20px;
-            display: block;
-            text-decoration: none;
-        }
-
-        .sidebar a:hover {
-            background-color: #563d7c;
-        }
-
-        .content {
-            margin-left: 250px;
-            padding: 20px;
-        }
-
-        .table-container {
-            margin-top: 20px;
-        }
-
-        .table th,
-        .table td {
-            vertical-align: middle;
-        }
-
-        .ad-image {
-            width: 50px;
-            height: 50px;
-            object-fit: cover;
-        }
-
-        .user-image {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        /* Styles pour le chargement */
-        .loading {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-        }
-
-        .loading-spinner {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        /* Styles pour la page de connexion */
-        #loginPage {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .login-form {
-            width: 400px;
-            padding: 40px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Styles pour les alertes */
-        .alert {
-            margin-top: 10px;
-        }
-
-        .alert-success {
-            background-color: #d4edda;
-            border-color: #c3e6cb;
-        }
-
-        .alert-danger {
-            background-color: #f8d7da;
-            border-color: #f5c6cb;
-        }
-    </style>
+    <!-- Styles globaux de l'application -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-
-  <!-- Page de connexion -->
-  <div id="loginPage">
-    <div class="login-form">
-        <h2>Connexion Administrateur</h2>
-        <form id="loginForm">
-            <div class="mb-3">
-                <label for="phone" class="form-label">Numéro de téléphone:</label>
-                <input type="text" class="form-control" id="phone" required>
-            </div>
-            <div class="mb-3">
-                <label for="password" class="form-label">Mot de passe:</label>
-                <input type="password" class="form-control" id="password" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Connexion</button>
-            <div id="loginError" class="alert alert-danger mt-3" style="display: none;"></div>
-        </form>
+    <!-- Page de connexion -->
+    <div id="loginPage">
+        <div class="login-form">
+            <h2>Connexion Administrateur</h2>
+            <form id="loginForm">
+                <div class="mb-3">
+                    <label for="phone" class="form-label">Numéro de téléphone:</label>
+                    <input type="text" class="form-control" id="phone" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Mot de passe:</label>
+                    <input type="password" class="form-control" id="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Connexion</button>
+                <div id="loginError" class="alert alert-danger mt-3" style="display: none;"></div>
+            </form>
+        </div>
     </div>
-</div>
 
     <!-- Contenu de l'application (initialement masqué) -->
     <div id="appContent" style="display:none;">
@@ -139,8 +35,7 @@
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
             <div class="container-fluid">
                 <a class="navbar-brand" href="#">PiggyMarket - Administration</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
@@ -192,47 +87,83 @@
 
                 <!-- Contenu de la page -->
                 <div class="col-md-10 content">
+                    <!-- Tableau de bord -->
                     <div id="dashboard">
-                        <h2>Tableau de bord</h2>
-                        <div class="row">
+                        <h2>Tableau de bord - PiggyMarket</h2>
+                        <div class="row mt-3">
                             <div class="col-md-4">
-                                <div class="card text-white bg-primary mb-3">
-                                    <div class="card-header">Utilisateurs</div>
-                                    <div class="card-body">
+                                <div class="card h-100">
+                                    <div class="card-header bg-primary text-white">
+                                        <i class="bi bi-people"></i> Utilisateurs
+                                    </div>
+                                    <div class="card-body d-flex flex-column align-items-center">
                                         <h5 class="card-title" id="totalUsers">0</h5>
+                                        <span class="text-muted">Total des utilisateurs</span>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <div class="card text-white bg-success mb-3">
-                                    <div class="card-header">Annonces</div>
-                                    <div class="card-body">
+                                <div class="card h-100">
+                                    <div class="card-header bg-success text-white">
+                                        <i class="bi bi-card-list"></i> Annonces
+                                    </div>
+                                    <div class="card-body d-flex flex-column align-items-center">
                                         <h5 class="card-title" id="totalAds">0</h5>
+                                        <span class="text-muted">Total des annonces</span>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <div class="card text-white bg-warning mb-3">
-                                    <div class="card-header">Commandes</div>
-                                    <div class="card-body">
+                                <div class="card h-100">
+                                    <div class="card-header bg-warning text-white">
+                                        <i class="bi bi-cart-check"></i> Commandes
+                                    </div>
+                                    <div class="card-body d-flex flex-column align-items-center">
                                         <h5 class="card-title" id="totalOrders">0</h5>
+                                        <span class="text-muted">Total des commandes</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
                         <div class="row mt-3">
                             <div class="col-md-12">
-                                <div class="card text-white bg-info mb-3">
-                                    <div class="card-header">Revenu Total</div>
+                                <div class="card h-100">
+                                    <div class="card-header bg-info text-white">
+                                        <i class="bi bi-graph-up"></i> Revenu Total
+                                    </div>
                                     <div class="card-body">
-                                        <h5 class="card-title" id="totalRevenue">0</h5>
+                                        <canvas id="revenueChart" height="100"></canvas>
+                                        <h5 class="card-title mt-3" id="totalRevenue">0</h5>
+                                        <span class="text-muted">Total des revenus générés</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <div class="card h-100">
+                                    <div class="card-header bg-secondary text-white">
+                                        <i class="bi bi-bar-chart-line"></i> Evolution des commandes
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="orderChart" height="100"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card h-100">
+                                    <div class="card-header bg-secondary text-white">
+                                        <i class="bi bi-pie-chart"></i> Répartition des utilisateurs par rôle
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="userChart" height="100"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
 
+                    <!-- Utilisateurs -->
                     <div id="users" style="display: none;">
                         <h2>Utilisateurs</h2>
                         <div class="table-container">
@@ -254,6 +185,7 @@
                         </div>
                     </div>
 
+                    <!-- Annonces -->
                     <div id="ads" style="display: none;">
                         <h2>Annonces</h2>
                         <div class="table-container">
@@ -275,6 +207,7 @@
                         </div>
                     </div>
 
+                    <!-- Commandes -->
                     <div id="orders" style="display: none;">
                         <h2>Commandes</h2>
                         <div class="table-container">
@@ -295,6 +228,7 @@
                         </div>
                     </div>
 
+                    <!-- Paramètres -->
                     <div id="settings" style="display: none;">
                         <h2>Paramètres</h2>
                         <p>Page des paramètres à venir.</p>
@@ -304,8 +238,7 @@
         </div>
 
         <!-- Fenêtre modale pour la confirmation de suppression -->
-        <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel"
-            aria-hidden="true">
+        <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -324,8 +257,7 @@
         </div>
 
         <!-- Fenêtre modale pour la validation d'une annonce -->
-        <div class="modal fade" id="confirmValidateModal" tabindex="-1" aria-labelledby="confirmValidateModalLabel"
-            aria-hidden="true">
+        <div class="modal fade" id="confirmValidateModal" tabindex="-1" aria-labelledby="confirmValidateModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -352,356 +284,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Variables globales
-        const loginPage = document.getElementById('loginPage');
-        const appContent = document.getElementById('appContent');
-        const loginForm = document.getElementById('loginForm');
-        const usersTable = document.getElementById('usersTable').getElementsByTagName('tbody')[0];
-        const adsTable = document.getElementById('adsTable').getElementsByTagName('tbody')[0];
-        const ordersTable = document.getElementById('ordersTable').getElementsByTagName('tbody')[0];
-        const totalUsersElement = document.getElementById('totalUsers');
-        const totalAdsElement = document.getElementById('totalAds');
-        const totalOrdersElement = document.getElementById('totalOrders');
-        const totalRevenueElement = document.getElementById('totalRevenue');
-        const confirmDeleteModal = document.getElementById('confirmDeleteModal');
-        const confirmDeleteButton = document.getElementById('confirmDeleteButton');
-        const confirmValidateModal = document.getElementById('confirmValidateModal');
-        const confirmValidateButton = document.getElementById('confirmValidateButton');
-        const loadingElement = document.getElementById('loading');
-        const logoutButton = document.getElementById('logoutButton');
-        let itemIdToDelete; // Variable pour stocker l'ID de l'élément à supprimer
-        let itemIdToValidate; // Variable pour stocker l'ID de l'élément à valider
-
-        // Fonction pour gérer la connexion
-        async function login(phone, password) {
-            try {
-                const response = await fetch('/api/login/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ phone, password }),
-                });
-
-                if (!response.ok) {
-                    const data = await response.json();
-                    const loginError = document.getElementById('loginError');
-                    loginError.textContent = data.error || 'Erreur lors de la connexion.';
-                    loginError.style.display = 'block';
-                    return;
-                }
-
-                const data = await response.json();
-                localStorage.setItem('token', data.token);
-                showAppContent();
-            } catch (error) {
-                const loginError = document.getElementById('loginError');
-                loginError.textContent = error.message;
-                loginError.style.display = 'block';
-            }
-        }
-
-        // Gestionnaire d'événements pour le formulaire de connexion
-        loginForm.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            const phone = event.target.querySelector('#phone').value;
-            const password = event.target.querySelector('#password').value;
-            console.log("okokokok");
-            await login(phone, password);
-        });
-
-        // Afficher le contenu de l'application après une authentification réussie
-        function showAppContent() {
-            loginPage.style.display = 'none';
-            appContent.style.display = 'block';
-            loadData();
-            showPageContent();
-        }
-
-        // Afficher la page de connexion en cas de déconnexion
-        function logout() {
-            loginPage.style.display = 'flex';
-            appContent.style.display = 'none';
-            localStorage.removeItem('token');
-        }
-
-        // Afficher le contenu de la page en fonction de l'ancre de l'URL
-        // ... (Le reste de votre code)
-
-// Afficher le contenu de la page en fonction de l'ancre de l'URL
-// ... (autres fonctions)
-
-// Fonction pour gérer le changement de page
-function showPageContent(page = 'dashboard') { 
-    const contentDivs = document.querySelectorAll('.content > div');
-    contentDivs.forEach(div => div.style.display = 'none');
-
-    const selectedDiv = document.getElementById(page);
-    if (selectedDiv) {
-        selectedDiv.style.display = 'block';
-    }
-}
-
-// Ajouter des gestionnaires d'événements aux liens du menu latéral
-const sidebarLinks = document.querySelectorAll('.sidebar ul.nav li a');
-sidebarLinks.forEach(link => {
-    link.addEventListener('click', (event) => {
-        event.preventDefault(); 
-        const targetPage = event.target.getAttribute('href').substring(1);
-        showPageContent(targetPage);
-    });
-});
-
-// ... (autres fonctions)
-
-// ... (Le reste de votre code)
-
-        // Mettre à jour le tableau des utilisateurs
-        function updateUsersTable(users) {
-            usersTable.innerHTML = '';
-            users.forEach(user => {
-                const row = usersTable.insertRow();
-                const idCell = row.insertCell();
-                const photoCell = row.insertCell();
-                const fullNameCell = row.insertCell();
-                const phoneCell = row.insertCell();
-                const roleCell = row.insertCell();
-                const statusCell = row.insertCell();
-                const actionsCell = row.insertCell();
-
-                idCell.textContent = user.id;
-                photoCell.innerHTML = `<img src="${user.image || 'https://via.placeholder.com/50'}" alt="Photo de profil" class="user-image">`;
-                fullNameCell.textContent = user.full_name;
-                phoneCell.textContent = user.phone;
-                roleCell.textContent = user.role;
-                statusCell.textContent = user.is_active ? 'Actif' : 'Inactif';
-                actionsCell.innerHTML = `
-                    <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editUserModal" data-user-id="${user.id}"><i class="bi bi-pencil"></i></a>
-                    <a href="#" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-item-id="${user.id}" data-delete-url="/api/admin/users/${user.id}/delete/"><i class="bi bi-trash"></i></a>
-                `;
-            });
-        }
-
-        // Mettre à jour le tableau des annonces
-        function updateAdsTable(ads) {
-            adsTable.innerHTML = '';
-            ads.forEach(ad => {
-                const row = adsTable.insertRow();
-                const idCell = row.insertCell();
-                const photoCell = row.insertCell();
-                const titleCell = row.insertCell();
-                const cityCell = row.insertCell();
-                const priceCell = row.insertCell();
-                const statusCell = row.insertCell();
-                const actionsCell = row.insertCell();
-
-                idCell.textContent = ad.id;
-                photoCell.innerHTML = `<img src="${ad.images[0] || 'https://via.placeholder.com/50'}" alt="Image de l'annonce" class="ad-image">`;
-                titleCell.textContent = ad.title;
-                cityCell.textContent = ad.city;
-                priceCell.textContent = ad.price_per_kg;
-                statusCell.textContent = ad.is_active ? 'Active' : 'Inactive';
-                actionsCell.innerHTML = `
-                    <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editAdModal" data-ad-id="${ad.id}"><i class="bi bi-pencil"></i></a>
-                    <a href="#" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#confirmValidateModal" data-ad-id="${ad.id}" data-validate-url="/api/admin/ads/${ad.id}/validate/"><i class="bi bi-check-circle"></i></a>
-                    <a href="#" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-item-id="${ad.id}" data-delete-url="/api/admin/ads/${ad.id}/delete/"><i class="bi bi-trash"></i></a>
-                `;
-            });
-        }
-
-        // Mettre à jour le tableau des commandes
-        function updateOrdersTable(orders) {
-            ordersTable.innerHTML = '';
-            orders.forEach(order => {
-                const row = ordersTable.insertRow();
-                const idCell = row.insertCell();
-                const userCell = row.insertCell();
-                const adCell = row.insertCell();
-                const quantityCell = row.insertCell();
-                const statusCell = row.insertCell();
-                const actionsCell = row.insertCell();
-
-                idCell.textContent = order.id;
-                userCell.textContent = order.user.full_name;
-                adCell.textContent = order.ad.title;
-                quantityCell.textContent = order.quantity;
-                statusCell.textContent = order.status;
-                actionsCell.innerHTML = `
-                    <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editOrderModal" data-order-id="${order.id}"><i class="bi bi-pencil"></i></a>
-                    <a href="#" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-item-id="${order.id}" data-delete-url="/api/admin/orders/${order.id}/delete/"><i class="bi bi-trash"></i></a>
-                `;
-            });
-        }
-
-        // Mettre à jour les statistiques du tableau de bord
-        function updateDashboardStats(data) {
-            totalUsersElement.textContent = data.total_users;
-            totalAdsElement.textContent = data.total_ads;
-            totalOrdersElement.textContent = data.total_orders;
-            totalRevenueElement.textContent = data.revenue.toFixed(2); // Affiche le revenu avec 2 décimales
-        }
-
-        // Gérer la suppression d'un élément
-        confirmDeleteModal.addEventListener('show.bs.modal', event => {
-            const button = event.relatedTarget;
-            itemIdToDelete = button.getAttribute('data-item-id');
-            const deleteUrl = button.getAttribute('data-delete-url');
-            confirmDeleteButton.setAttribute('data-delete-url', deleteUrl);
-        });
-
-        confirmDeleteButton.addEventListener('click', () => {
-            const deleteUrl = confirmDeleteButton.getAttribute('data-delete-url');
-            deleteItem(deleteUrl)
-                .then(() => {
-                    // Supprimer la ligne du tableau après la suppression réussie
-                    const rowToDelete = document.querySelector(`[data-item-id="${itemIdToDelete}"]`).closest('tr');
-                    if (rowToDelete) {
-                        rowToDelete.remove();
-                    }
-
-                    // Fermer la fenêtre modale
-                    confirmDeleteModal.hide();
-                })
-                .catch(error => {
-                    console.error('Erreur lors de la suppression de l\'élément :', error);
-                    // Gérer l'erreur, par exemple, afficher un message d'erreur à l'utilisateur.
-                });
-        });
-
-        // Gérer la validation d'une annonce
-        confirmValidateModal.addEventListener('show.bs.modal', event => {
-            const button = event.relatedTarget;
-            itemIdToValidate = button.getAttribute('data-ad-id');
-            const validateUrl = button.getAttribute('data-validate-url');
-            confirmValidateButton.setAttribute('data-validate-url', validateUrl);
-        });
-
-        confirmValidateButton.addEventListener('click', () => {
-            const validateUrl = confirmValidateButton.getAttribute('data-validate-url');
-            validateItem(validateUrl)
-                .then(() => {
-                    // Supprimer la ligne du tableau après la suppression réussie
-                    const rowToValidate = document.querySelector(`[data-ad-id="${itemIdToValidate}"]`).closest('tr');
-                    if (rowToValidate) {
-                        rowToValidate.remove();
-                    }
-
-                    // Fermer la fenêtre modale
-                    confirmValidateModal.hide();
-                })
-                .catch(error => {
-                    console.error('Erreur lors de la validation de l\'annonce :', error);
-                    // Gérer l'erreur, par exemple, afficher un message d'erreur à l'utilisateur.
-                });
-        });
-
-        // Fonction pour supprimer un élément
-        async function deleteItem(url) {
-            try {
-                const response = await fetch(url, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    },
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Erreur HTTP : ${response.status} ${response.statusText}`);
-                }
-
-                return response;
-            } catch (error) {
-                console.error('Erreur lors de la suppression de l\'élément :', error);
-                throw error;
-            }
-        }
-
-        // Fonction pour valider une annonce
-        async function validateItem(url) {
-            try {
-                const response = await fetch(url, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    },
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Erreur HTTP : ${response.status} ${response.statusText}`);
-                }
-
-                return response;
-            } catch (error) {
-                console.error('Erreur lors de la validation de l\'annonce :', error);
-                throw error;
-            }
-        }
-
-        // Charger les données et mettre à jour l'interface utilisateur
-        async function loadData() {
-            showLoading();
-            const token = localStorage.getItem('token');
-
-            // Ajouter le token aux en-têtes des requêtes
-            const headers = {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}` 
-            };
-
-            try {
-                // Charger les données des utilisateurs
-                const usersResponse = await fetch('/api/admin/users/', { headers });
-                const usersData = await usersResponse.json();
-                updateUsersTable(usersData);
-
-                // Charger les données des annonces
-                const adsResponse = await fetch('/api/admin/ads/', { headers });
-                const adsData = await adsResponse.json();
-                updateAdsTable(adsData);
-
-                // Charger les données des commandes
-                const ordersResponse = await fetch('/api/admin/orders/', { headers });
-                const ordersData = await ordersResponse.json();
-                updateOrdersTable(ordersData);
-
-                // Charger les statistiques
-                const statsResponse = await fetch('/api/admin/stats/', { headers });
-                const statsData = await statsResponse.json();
-                updateDashboardStats(statsData);
-
-            } catch (error) {
-                console.error('Erreur lors du chargement des données :', error);
-                // Gérer l'erreur, par exemple, afficher un message d'erreur à l'utilisateur.
-            } finally {
-                hideLoading();
-            }
-        }
-
-        // Afficher le div de chargement
-        function showLoading() {
-            loadingElement.style.display = 'block';
-        }
-
-        // Masquer le div de chargement
-        function hideLoading() {
-            loadingElement.style.display = 'none';
-        }
-
-        // Gestionnaire d'événements pour le bouton de déconnexion
-        logoutButton.addEventListener('click', () => {
-            logout();
-        });
-
-        // Afficher la page de connexion au chargement de la page
-        window.addEventListener('load', () => {
-            loginPage.style.display = 'flex';
-        });
-
-        // Mettre à jour le contenu de la page lorsque le hachage de l'URL change (après la connexion)
-        window.addEventListener('hashchange', showPageContent);
-    </script>
+    <script src="{% static 'js/app.js' %}"></script> 
 </body>
 </html>
