@@ -197,55 +197,51 @@ class UserOrdersListView(generics.ListAPIView):
         user_id = self.kwargs['user_id']
         return Order.objects.filter(user__id=user_id)
 
+from .models import PriceRule
+
 class AdListCreateView(generics.ListCreateAPIView):
     queryset = Ad.objects.all()
     serializer_class = AdSerializer
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-        # Obtenir le prix de l'annonce
         price = self.request.data.get('price_per_kg')
-        # Vérifier le role de l'utilisateur et appliquer les règles de prix
         role = self.request.data.get('type')
 
         try:
-            # Trouver la règle de prix applicable 
-            rule = PriceRule.objects.get(role=role, min_price__lte=price, max_price__gte=price)
-           
+            # Chercher une règle spécifique pour le rôle donné
+            rule = PriceRule.objects.get(role=role, min_price__lte=price) 
+            
+            # Si une règle existe, appliquer la logique de la règle
             if rule.fixed_price is not None:
                 new_price = rule.fixed_price
-            elif rule.price_increase_percentage:
+            elif rule.price_increase_percentage is not None:
                 increase_amount = price * (rule.price_increase_percentage / 100) 
                 new_price = price + increase_amount 
             else:
-                new_price = price             
-
+                new_price = price  
+        
         except PriceRule.DoesNotExist:
-           # Gérer le cas où aucune règle n'est trouvée - prix par défaut
-            new_price = price 
+            # Gérer le cas où aucune règle n'est trouvée, appliquer une logique par défaut (spécifique au rôle)
+            new_price = price
             if role == 'butcher':
                 new_price = price + 200 
-            if role == 'buyer':
+            elif role == 'buyer':  # Utiliser 'elif' pour une meilleure lisibilité
                 new_price = price 
-            if role == 'farmer':
-                if price >= 1300 and price <= 1599:
+            elif role == 'farmer': 
+                if 1300 <= price <= 1599:  #  Syntaxe simplifiée 
                     new_price = 1900
-                elif price >= 1600 and price <= 1849:
+                elif 1600 <= price <= 1849:
                     new_price = 2100
-                elif price >= 1850 and price <= 1999:
+                elif 1850 <= price <= 1999:
                     new_price = 2200
-                elif price >= 2000 and price <= 2500:
+                elif 2000 <= price <= 2500:
                     new_price = price + 250
                 elif price > 2500:
                     new_price = price + 250
-                else:
-                    new_price = price
-            
-            # Enregistrer l'annonce avec le prix ajusté 
+
+        # Enregistrer l'annonce avec le prix ajusté
         serializer.save(user=self.request.user, price_per_kg=new_price)
-
-
-        
 
         address = self.request.data.get('address')
         if address:
@@ -253,6 +249,8 @@ class AdListCreateView(generics.ListCreateAPIView):
             if latitude and longitude:
                 Location.objects.create(ad=serializer.instance, latitude=latitude, longitude=longitude, address=address)
 
+
+                
 class AdRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Ad.objects.all()
     serializer_class = AdSerializer
@@ -562,7 +560,6 @@ class OrderListView(generics.ListAPIView):
 
         status = self.request.query_params.get('status', None)
         if status:
-            print("okokokok\n\n\n\n\n\n")
             return queryset.filter(status=status)
         return queryset
 
@@ -622,9 +619,6 @@ def get_nearby_buyers_ads(request):
     ads = Ad.objects.filter(type='buyer')
     serializer = AdSerializer(ads, many=True)
     return Response(serializer.data)
-
-
-
 # ...
 
 class PriceRuleListView(generics.ListCreateAPIView):
