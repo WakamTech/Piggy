@@ -365,6 +365,40 @@ confirmDeleteButton.addEventListener('click', () => {
         .catch(error => console.error(error));
 });
 
+// ... votre code JavaScript ... 
+ 
+const revenueChartCanvas = document.getElementById('revenueChart').getContext('2d');
+
+function createRevenueChart(labels, data) {
+  // Supprimer le graphique s'il existe déjà 
+  if (window.revenueChart instanceof Chart) {
+    window.revenueChart.destroy();
+  }
+ 
+  // Création du graphique avec Chart.js 
+  window.revenueChart = new Chart(revenueChartCanvas, { 
+    type: 'line', // Ou 'bar', 'pie', etc., selon le type de graphique souhaité
+    data: {
+        labels: labels, 
+        datasets: [{ 
+            label: 'Revenu total',
+            data: data, 
+            backgroundColor: 'rgba(54, 162, 235, 0.2)', 
+            borderColor: 'rgba(54, 162, 235, 1)', 
+            borderWidth: 1
+        }]
+    }, 
+    // Configuration des options du graphique (axe des abscisses, titre, etc.)
+    options: { 
+      scales: { 
+        y: { 
+          beginAtZero: true
+        }
+      } 
+    } 
+  }); 
+} 
+
 async function deleteItem(deleteUrl) {
     try {
         const response = await fetch(deleteUrl, {
@@ -505,6 +539,19 @@ async function loadData() {
 
         const priceRulesData = await priceRulesResponse.json(); 
         updatePriceRulesTable(priceRulesData); // Met à jour le tableau HTML
+
+        // -- Préparation des données pour le graphique des revenus -- 
+        const revenueLabels = []; // Dates (par exemple)
+        const revenueData = [];  // Montants des revenus
+
+        // ---  Supposons que statsData contienne des données historiques :  --- 
+        statsData.forEach(stat => { 
+        revenueLabels.push(stat.date);  // Remplacez 'date' par le nom de champ de votre backend
+        revenueData.push(stat.revenue); //  Remplacez 'revenue' 
+        });
+
+        // Créer le graphique (voir l'étape 3)
+        createRevenueChart(revenueLabels, revenueData); 
     } catch (error) {
         console.error('Erreur:', error);
     } finally {

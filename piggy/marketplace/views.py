@@ -250,7 +250,7 @@ class AdListCreateView(generics.ListCreateAPIView):
                 Location.objects.create(ad=serializer.instance, latitude=latitude, longitude=longitude, address=address)
 
 
-                
+
 class AdRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Ad.objects.all()
     serializer_class = AdSerializer
@@ -577,24 +577,27 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.db.models import Sum, F
 
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAdminUser
+from rest_framework.response import Response
+from django.db.models import Sum, F
+
 @api_view(['GET'])
 @permission_classes([IsAdminUser])
 def get_stats(request):
-    #print(request)
-    total_users = User.objects.count()
-    total_ads = Ad.objects.count()
-    total_orders = Order.objects.count()
+    #... (calcul pour le revenue)
 
-    # Calculate the total revenue based on delivered orders
-    revenue = Order.objects.filter(status='delivered').aggregate(
-        total_revenue=Sum(F('quantity') * F('ad__price_per_kg'))
-    )['total_revenue']
+    # Calculate the current revenue based on 'accepted' orders 
+    current_revenue = Order.objects.filter(status='accepted').aggregate(
+        total_current_revenue=Sum(F('quantity') * F('ad__price_per_kg')) 
+    )['total_current_revenue']
 
     return Response({
         "total_users": total_users,
         "total_ads": total_ads,
         "total_orders": total_orders,
-        "revenue": revenue or 0
+        "revenue": revenue or 0,  # existing revenue
+        "current_revenue": current_revenue or 0  # new
     })
 
 from rest_framework.decorators import api_view
