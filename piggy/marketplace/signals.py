@@ -36,9 +36,9 @@ def handle_order_notification(sender, instance, created, **kwargs):
         Notification.objects.create(
             user=ad_seller,
             title='Nouvelle commande',
-            message=f'Nouvelle Commande reçue {instance.id} validée avec succès par {instance.user.username}',
+            message=f'Nouvelle Commande reçue {instance.id} validée avec succès',
         )
-        send_fcm_notification(ad_seller, 'Nouvelle Commande reçue', f'Commande {instance.id} validée avec succès par {instance.user.username}')
+        send_fcm_notification(ad_seller, 'Nouvelle Commande reçue', f'Commande {instance.id} validée avec succès')
     
     elif instance.status == 'cancelled':
         # Notification pour l'utilisateur qui a annulé la commande
@@ -54,9 +54,9 @@ def handle_order_notification(sender, instance, created, **kwargs):
         Notification.objects.create(
             user=ad_seller,
             title='Commande annulée',
-            message=f'Commande {instance.id} a été annulée par {instance.user.username}',
+            message=f'Commande {instance.id} a été annulée',
         )
-        send_fcm_notification(ad_seller, 'Commande annulée', f'Commande {instance.id} a été annulée par {instance.user.username}')
+        send_fcm_notification(ad_seller, 'Commande annulée', f'Commande {instance.id} a été annulée')
 
     elif instance.status == 'accepted':
         # Notification pour l'utilisateur qui a annulé la commande
