@@ -211,7 +211,7 @@ class AdListCreateView(generics.ListCreateAPIView):
 
         if role == 'butcher':
             new_price = price + 200 
-        if rolle == 'buyer':
+        if role == 'buyer':
             new_price = price 
         elif price >= 1300 and price <= 1599:
             new_price = 1900
