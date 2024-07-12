@@ -605,8 +605,7 @@ def get_stats(request):
         "total_users": total_users,
         "total_ads": total_ads,
         "total_orders": total_orders,
-        "revenue": revenue or 0
-        "current_revenue": current_revenue or 0  # new
+        "current_revenue": current_revenue   # new
         "manager_revenue" : manager_revenue
     })
 
