@@ -285,12 +285,14 @@ class ButcheryListCreateView(generics.ListCreateAPIView):
     serializer_class = ButcherySerializer
     permission_classes = [IsAuthenticated]
 
+
 class ButcheryAdsListView(generics.ListAPIView):
     serializer_class = AdSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Ad.objects.filter(type='butcher')
+        return Ad.objects.filter(type='butcher').order_by('-created_at')
+
 
 class ButcheryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Butchery.objects.all()
