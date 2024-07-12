@@ -632,3 +632,7 @@ class PriceRuleListView(generics.ListCreateAPIView):
     queryset = PriceRule.objects.all()
     serializer_class = PriceRuleSerializer
     permission_classes = [IsAdminUser] 
+
+    def create(self, request, *args, **kwargs):
+            print("Données reçues dans la vue create():", request.data)
+            return super().create(request, *args, **kwargs)
