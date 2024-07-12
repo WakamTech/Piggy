@@ -628,7 +628,7 @@ from .models import PriceRule
 from .serializers import PriceRuleSerializer
 # ...
 
-class PriceRuleListView(generics.ListAPIView):
+class PriceRuleListView(generics.ListCreateAPIView):
     queryset = PriceRule.objects.all()
     serializer_class = PriceRuleSerializer
     permission_classes = [IsAdminUser] 
