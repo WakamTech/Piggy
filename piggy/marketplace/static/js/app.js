@@ -91,6 +91,7 @@ sidebarLinks.forEach(link => {
     });
 });
 
+
 // Mettre à jour le tableau des utilisateurs
 function updateUsersTable(users) {
     usersTable.innerHTML = '';
@@ -105,13 +106,17 @@ function updateUsersTable(users) {
         const actionsCell = row.insertCell();
 
         idCell.textContent = user.id;
-        photoCell.innerHTML = `<img src="${user.image || 'https://via.placeholder.com/50'}" alt="Photo de profil" class="user-image">`;
+
+        // Vérifiez si 'image' est défini avant de l'utiliser
+        photoCell.innerHTML = user.image 
+            ? `<img src="${user.image}" alt="Photo de profil" class="user-image">` 
+            : `<img src="https://via.placeholder.com/50" alt="Photo de profil" class="user-image">`;
+
         fullNameCell.textContent = user.full_name;
         phoneCell.textContent = user.phone;
         roleCell.textContent = user.role;
         statusCell.textContent = user.is_active ? 'Actif' : 'Inactif';
         actionsCell.innerHTML = `
-            <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editUserModal" data-user-id="${user.id}"><i class="bi bi-pencil"></i></a>
             <a href="#" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-item-id="${user.id}" data-delete-url="/api/admin/users/${user.id}/delete/"><i class="bi bi-trash"></i></a>
         `;
     });
@@ -131,13 +136,16 @@ function updateAdsTable(ads) {
         const actionsCell = row.insertCell();
 
         idCell.textContent = ad.id;
-        photoCell.innerHTML = `<img src="${ad.images[0] || 'https://via.placeholder.com/50'}" alt="Image de l'annonce" class="ad-image">`;
+        // photoCell.innerHTML = `<img src="${ad.images[0] || 'https://via.placeholder.com/50'}" alt="Image de l'annonce" class="ad-image">`;
+        // Assuming 'image' field in your Ad model now
+        photoCell.innerHTML = ad.image
+            ? `<img src="${ad.image}" alt="Image de l'annonce" class="ad-image">`
+            : `<img src="https://via.placeholder.com/50" alt="Image de l'annonce" class="ad-image">`;
         titleCell.textContent = ad.title;
-        cityCell.textContent = ad.city;
+        cityCell.textContent = ad.address; // Assuming 'address' is the field for city
         priceCell.textContent = ad.price_per_kg;
         statusCell.textContent = ad.is_active ? 'Active' : 'Inactive';
         actionsCell.innerHTML = `
-            <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editAdModal" data-ad-id="${ad.id}"><i class="bi bi-pencil"></i></a>
             <a href="#" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#confirmValidateModal" data-ad-id="${ad.id}" data-validate-url="/api/admin/ads/${ad.id}/validate/"><i class="bi bi-check-circle"></i></a>
             <a href="#" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-item-id="${ad.id}" data-delete-url="/api/admin/ads/${ad.id}/delete/"><i class="bi bi-trash"></i></a>
         `;
@@ -200,12 +208,11 @@ function updateOrdersTable(orders) {
         const actionsCell = row.insertCell();
 
         idCell.textContent = order.id;
-        userCell.textContent = order.user.full_name;
-        adCell.textContent = order.ad.title;
+        userCell.textContent = order.user.full_name; // Assuming 'user' is an object with 'full_name'
+        adCell.textContent = order.ad.title; // Assuming 'ad' is an object with 'title'
         quantityCell.textContent = order.quantity;
         statusCell.textContent = order.status;
         actionsCell.innerHTML = `
-            <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editOrderModal" data-order-id="${order.id}"><i class="bi bi-pencil"></i></a>
             <a href="#" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#editOrderStatusModal" data-order-id="${order.id}" data-current-status="${order.status}"><i class="bi bi-arrow-repeat"></i></a>
             <a href="#" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-item-id="${order.id}" data-delete-url="/api/admin/orders/${order.id}/delete/"><i class="bi bi-trash"></i></a>
         `;
@@ -219,7 +226,7 @@ function updateDashboardStats(data) {
     totalUsersElement.textContent = data.total_users;
     totalAdsElement.textContent = data.total_ads;
     totalOrdersElement.textContent = data.total_orders;
-    totalRevenueElement.textContent = data.revenue.toFixed(2); // Affiche le revenu avec 2 décimales
+    totalRevenueElement.textContent = data.revenue ? data.revenue.toFixed(2) : '0.00'; // Affiche le revenu avec 2 décimales
 }
 
 // Gérer la suppression d'un élément
@@ -290,7 +297,7 @@ confirmValidateButton.addEventListener('click', () => {
 async function validateAd(validateUrl) {
     try {
         const response = await fetch(validateUrl, {
-            method: 'POST',
+            method: 'PUT', // Use PUT for updating
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 'Content-Type': 'application/json',
@@ -311,22 +318,66 @@ async function validateAd(validateUrl) {
 async function loadData() {
     try {
         loadingElement.style.display = 'block';
-        const response = await fetch('/api/dashboard/', {
+
+        // Charger les statistiques du tableau de bord
+        const statsResponse = await fetch('/api/admin/stats/', {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 'Content-Type': 'application/json',
             },
         });
 
-        if (!response.ok) {
-            throw new Error('Erreur lors du chargement des données.');
+        if (!statsResponse.ok) {
+            throw new Error('Erreur lors du chargement des statistiques.');
         }
 
-        const data = await response.json();
-        updateUsersTable(data.users);
-        updateAdsTable(data.ads);
-        updateOrdersTable(data.orders);
-        updateDashboardStats(data.stats);
+        const statsData = await statsResponse.json();
+        updateDashboardStats(statsData);
+
+        // Charger les utilisateurs
+        const usersResponse = await fetch('/api/admin/users/', {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!usersResponse.ok) {
+            throw new Error('Erreur lors du chargement des utilisateurs.');
+        }
+
+        const usersData = await usersResponse.json();
+        updateUsersTable(usersData);
+
+        // Charger les annonces
+        const adsResponse = await fetch('/api/admin/ads/', {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!adsResponse.ok) {
+            throw new Error('Erreur lors du chargement des annonces.');
+        }
+
+        const adsData = await adsResponse.json();
+        updateAdsTable(adsData);
+
+        // Charger les commandes
+        const ordersResponse = await fetch('/api/admin/orders/', {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!ordersResponse.ok) {
+            throw new Error('Erreur lors du chargement des commandes.');
+        }
+
+        const ordersData = await ordersResponse.json();
+        updateOrdersTable(ordersData);
     } catch (error) {
         console.error('Erreur:', error);
     } finally {
