@@ -291,7 +291,7 @@ class ButcheryAdsListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Ad.objects.filter(type='butcher').order_by('-created_at')
+        return Ad.objects.filter(type='butcher')
 
 
 class ButcheryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
