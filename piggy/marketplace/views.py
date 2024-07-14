@@ -634,6 +634,7 @@ class StandardResultsSetPagination(PageNumberPagination):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_nearby_farmers_ads(request):
+    print(request.body)
     ads = Ad.objects.filter(type='farmer')
 
     paginator = StandardResultsSetPagination()
@@ -644,6 +645,8 @@ def get_nearby_farmers_ads(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_nearby_buyers_ads(request):
+    print(request.body)
+
     ads = Ad.objects.filter(type='buyer')
     
     paginator = StandardResultsSetPagination()
