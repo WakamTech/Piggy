@@ -619,42 +619,21 @@ from geopy.distance import distance as geopy_distance
 
 geolocator = Nominatim(user_agent="piggy_geocoder")
 
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.pagination import PageNumberPagination
-from .models import Ad
-from .serializers import AdSerializer
-
-class StandardResultsSetPagination(PageNumberPagination):
-    page_size = 20
-    page_size_query_param = 'limit'
-    max_page_size = 100
-
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_nearby_farmers_ads(request):
-    print(request)
     ads = Ad.objects.filter(type='farmer')
 
-    paginator = StandardResultsSetPagination()
-    paginated_ads = paginator.paginate_queryset(ads, request)
-    serializer = AdSerializer(paginated_ads, many=True)
-    return paginator.get_paginated_response(serializer.data)
+    serializer = AdSerializer(ads, many=True)
+    return Response(serializer.data)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_nearby_buyers_ads(request):
-    print(request)
-
     ads = Ad.objects.filter(type='buyer')
-    
-    paginator = StandardResultsSetPagination()
-    paginated_ads = paginator.paginate_queryset(ads, request)
-    serializer = AdSerializer(paginated_ads, many=True)
-    return paginator.get_paginated_response(serializer.data)
-
-# ... 
+    serializer = AdSerializer(ads, many=True)
+    return Response(serializer.data)
+# ...
 
 class PriceRuleListView(generics.ListCreateAPIView):
     queryset = PriceRule.objects.all()
