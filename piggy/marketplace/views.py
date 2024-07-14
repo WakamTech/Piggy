@@ -627,13 +627,28 @@ def get_nearby_farmers_ads(request):
     serializer = AdSerializer(ads, many=True)
     return Response(serializer.data)
 
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
+from .models import Ad
+from .serializers import AdSerializer
+
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 20  # Par défaut, renvoie 20 annonces par page
+    page_size_query_param = 'limit'  # Permet aux utilisateurs de définir la taille de la page avec ?limit=
+    max_page_size = 100  # Définit la taille maximale de la page
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_nearby_buyers_ads(request):
     ads = Ad.objects.filter(type='buyer')
-    serializer = AdSerializer(ads, many=True)
-    return Response(serializer.data)
-# ...
+
+    # Pagination
+    paginator = StandardResultsSetPagination()
+    paginated_ads = paginator.paginate_queryset(ads, request)
+    serializer = AdSerializer(paginated_ads, many=True)
+    return paginator.get_paginated_response(serializer.data)
 
 class PriceRuleListView(generics.ListCreateAPIView):
     queryset = PriceRule.objects.all()
