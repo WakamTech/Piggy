@@ -2,6 +2,7 @@
 
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +11,14 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
     <!-- Styles globaux de l'application -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@^3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@^2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@^1"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+
 </head>
+
 <body>
     <!-- Page de connexion -->
     <div id="loginPage">
@@ -37,7 +45,8 @@
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
             <div class="container-fluid">
                 <a class="navbar-brand" href="#">PiggyMarket - Administration</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
@@ -128,7 +137,7 @@
                             </div>
                         </div>
                         <div class="row mt-3">
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <div class="card h-100">
                                     <div class="card-header bg-info text-white">
                                         <i class="bi bi-graph-up"></i> Revenu Total
@@ -137,6 +146,18 @@
                                         <canvas id="revenueChart" height="100"></canvas>
                                         <h5 class="card-title mt-3" id="totalRevenue">0</h5>
                                         <span class="text-muted">Total des revenus générés</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card h-100">
+                                    <div class="card-header bg-info text-white">
+                                        <i class="bi bi-graph-up"></i> Revenu Propres
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="revenueChart" height="100"></canvas>
+                                        <h5 class="card-title mt-3" id="managerRevenue">0</h5>
+                                        <span class="text-muted">Total des revenus Propres</span>
                                     </div>
                                 </div>
                             </div>
@@ -163,7 +184,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div> 
+                    </div>
 
                     <!-- Utilisateurs -->
                     <div id="users" style="display: none;">
@@ -184,6 +205,35 @@
                                 <tbody>
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="editUserModalLabel">Modifier le Rôle de l'Utilisateur
+                                    </h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="editUserForm">
+                                        <input type="hidden" id="userId"> <!-- Input to store user ID -->
+                                        <div class="mb-3">
+                                            <label for="userRole" class="form-label">Rôle</label>
+                                            <select class="form-select" id="userRole" name="role">
+                                                <!--  You will have your own possible roles -->
+                                                <option value="buyer">Acheteur</option>
+                                                <option value="seller">Vendeur</option>
+                                                <option value="admin">Administrateur</option>
+                                                <!-- Add other roles ... -->
+                                            </select>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Enregistrer</button>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -231,12 +281,15 @@
                     </div>
 
                     <!-- Modal for Editing Order Status -->
-                    <div class="modal fade" id="editOrderStatusModal" tabindex="-1" aria-labelledby="editOrderStatusModalLabel" aria-hidden="true">
+                    <div class="modal fade" id="editOrderStatusModal" tabindex="-1"
+                        aria-labelledby="editOrderStatusModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="editOrderStatusModalLabel">Modifier le Statut de la Commande</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    <h5 class="modal-title" id="editOrderStatusModalLabel">Modifier le Statut de la
+                                        Commande</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
                                     <form id="editOrderStatusForm">
@@ -270,7 +323,7 @@
                                         <th>Rôle</th>
                                         <th>Prix Min</th>
                                         <th>Prix Max</th>
-                                        <th>Pourcentage d'Augmentation</th> 
+                                        <th>Pourcentage d'Augmentation</th>
                                         <th>Prix Fixe</th>
                                         <th>Actions</th>
                                     </tr>
@@ -280,22 +333,65 @@
                                 </tbody>
                             </table>
                         </div>
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPriceRuleModal">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#addPriceRuleModal">
                             Ajouter une Règle
                         </button>
+                        <h3>Images de Promotion</h3>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <!-- Cloudinary Configuration Input -->
+                                <div class="mb-3">
+                                    <label for="cloudinary_cloud_name" class="form-label">Nom du Cloud
+                                        (Cloudinary)</label>
+                                    <input type="text" class="form-control" id="cloudinary_cloud_name"
+                                        placeholder="Exemple: my-cloud-name">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="cloudinary_api_key" class="form-label">Clé API (Cloudinary)</label>
+                                    <input type="text" class="form-control" id="cloudinary_api_key"
+                                        placeholder="Exemple: 1234567890abcdef">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="cloudinary_api_secret" class="form-label">Secret API
+                                        (Cloudinary)</label>
+                                    <input type="text" class="form-control" id="cloudinary_api_secret"
+                                        placeholder="Exemple: your_secret_key">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <!-- Image Upload Section -->
+                                <div class="mb-3">
+                                    <label for="promotionImageUpload" class="form-label">Ajouter l'URL d'une image (Max.
+                                        5)</label>
+                                    <input type="file" class="form-control" id="promotionImageUpload" accept="image/*">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="promotionImageAltText" class="form-label">Texte alternatif</label>
+                                    <input type="text" class="form-control" id="promotionImageAltText"
+                                        placeholder="Exemple: Offre Spéciale">
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-primary" id="saveCloudinarySettings">Enregistrer
+                            Cloudinary</button>
+                        <button type="button" class="btn btn-secondary" id="uploadPromotionImage">Télécharger
+                            l'image</button>
                     </div>
 
                     <!-- Modal d'ajout/modification de règle de prix -->
-                    <div class="modal fade" id="addPriceRuleModal" tabindex="-1" aria-labelledby="addPriceRuleModalLabel" aria-hidden="true">
+                    <div class="modal fade" id="addPriceRuleModal" tabindex="-1"
+                        aria-labelledby="addPriceRuleModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="addPriceRuleModalLabel">Ajouter une Règle de Prix</h5> 
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    <h5 class="modal-title" id="addPriceRuleModalLabel">Ajouter une Règle de Prix</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <form id="priceRuleForm"> 
-                                        <input type="hidden" id="ruleId">  
+                                    <form id="priceRuleForm">
+                                        <input type="hidden" id="ruleId">
                                         <!-- Champ caché pour l'ID lors de la modification -->
 
                                         <div class="mb-3">
@@ -307,32 +403,39 @@
                                         </div>
                                         <div class="mb-3">
                                             <label for="min_price" class="form-label">Prix Minimum</label>
-                                            <input type="number" class="form-control" id="min_price" name="min_price" required>
+                                            <input type="number" class="form-control" id="min_price" name="min_price"
+                                                required>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="max_price" class="form-label">Prix Maximum (Laissez vide pour illimité)</label>
+                                            <label for="max_price" class="form-label">Prix Maximum (Laissez vide pour
+                                                illimité)</label>
                                             <input type="number" class="form-control" id="max_price" name="max_price">
                                         </div>
                                         <div class="mb-3">
-                                            <label for="price_increase_percentage" class="form-label">Pourcentage d'Augmentation (%)</label>
-                                            <input type="number" step="0.01" class="form-control" id="price_increase_percentage" name="price_increase_percentage"> 
+                                            <label for="price_increase_percentage" class="form-label">Pourcentage
+                                                d'Augmentation (%)</label>
+                                            <input type="number" step="0.01" class="form-control"
+                                                id="price_increase_percentage" name="price_increase_percentage">
                                         </div>
                                         <div class="mb-3">
-                                            <label for="fixed_price" class="form-label">Prix Fixe (Laissez vide si non applicable)</label>
-                                            <input type="number" class="form-control" id="fixed_price" name="fixed_price">
+                                            <label for="fixed_price" class="form-label">Prix Fixe (Laissez vide si non
+                                                applicable)</label>
+                                            <input type="number" class="form-control" id="fixed_price"
+                                                name="fixed_price">
                                         </div>
                                         <button type="submit" class="btn btn-primary">Enregistrer</button>
                                     </form>
                                 </div>
                             </div>
                         </div>
-                    </div> 
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Fenêtre modale pour la confirmation de suppression -->
-        <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+        <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel"
+            aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -351,7 +454,8 @@
         </div>
 
         <!-- Fenêtre modale pour la validation d'une annonce -->
-        <div class="modal fade" id="confirmValidateModal" tabindex="-1" aria-labelledby="confirmValidateModalLabel" aria-hidden="true">
+        <div class="modal fade" id="confirmValidateModal" tabindex="-1" aria-labelledby="confirmValidateModalLabel"
+            aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -376,8 +480,7 @@
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{% static 'js/app.js' %}"></script> 
+    <script src="{% static 'js/app.js' %}"></script>
 </body>
+
 </html>

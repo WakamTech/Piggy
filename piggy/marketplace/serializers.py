@@ -92,3 +92,14 @@ class PriceRuleSerializer(serializers.ModelSerializer):
     class Meta:
         model = PriceRule
         fields = '__all__' # Ou spécifiez les champs à exposer
+
+from rest_framework import serializers
+from .models import PromotionImage
+
+class PromotionImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PromotionImage
+        fields = '__all__'  # Include all fields in the model (url, user - which may be empty, depending on your Django setup)
+
+        #  Add read-only fields (for the ID). 
+        # Example: read-only field  for the ID (it depends on the specific cod

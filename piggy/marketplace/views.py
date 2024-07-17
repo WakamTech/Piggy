@@ -21,7 +21,8 @@ from .serializers import ConfigSerializer
 from rest_framework import generics
 from .models import PriceRule
 from .serializers import PriceRuleSerializer
-
+from datetime import timedelta, date
+from django.db.models import Count
 import os
 
 TWILIO_ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID')
@@ -447,9 +448,12 @@ class IsAdminUser(permissions.BasePermission):
         return request.user and request.user.is_authenticated and request.user.role == 'admin'
 
 
+
+
 @api_view(['GET'])
 @permission_classes([])  # Cette ligne permet l'accès sans authentification
 def dashboard(request):
+    
     # Statistiques des utilisateurs
     total_users = User.objects.count()
     active_users = User.objects.filter(is_active=True).count()
@@ -463,6 +467,15 @@ def dashboard(request):
     pending_orders = Order.objects.filter(status='pending').count()
     delivered_orders = Order.objects.filter(status='delivered').count()
 
+    # Statistiques des rôles des utilisateurs
+    
+
+     # Calculate the total revenue based on delivered orders
+    revenue = Order.objects.filter(status='delivered').aggregate(
+        total_revenue=Sum(F('quantity') * F('ad__price_per_kg'))
+    )['total_revenue']
+
+    
     # Préparation du contexte pour le template
     context = {
         'total_users': total_users,
@@ -471,10 +484,12 @@ def dashboard(request):
         'active_ads': active_ads,
         'total_orders': total_orders,
         'pending_orders': pending_orders,
-        'delivered_orders': delivered_orders
-    }
-    
+        'delivered_orders': delivered_orders,
+        'revenue' : revenue
+        
+    }    
     return render(request, 'marketplace/index.html', context)
+
 
 
 
@@ -599,17 +614,30 @@ def get_stats(request):
     )['total_current_revenue']
 
     manager_revenue = 0
-    for order in Order.objects.filter(status__in=['accepted', 'en_preparation', 'delivered']):
+    for order in Order.objects.filter(status__in=['accepted', 'pending', 'delivered']):
         price_difference = order.ad.price_per_kg - order.ad.initial_price_per_kg
         manager_revenue += price_difference * order.quantity
 
+    roles = User.ROLE_CHOICES
+    user_roles_count = {role[0]: User.objects.filter(role=role[0]).count() for role in roles}
+
+    today = date.today()
+    last_week_start = today - timedelta(days=30)
+
+    orders_evolution = Ad.objects.filter(created_at__range=(last_week_start, today)).values('created_at__date').annotate(count=Count('id')).order_by('created_at__date')
+
+    print(list(orders_evolution) )
     return Response({
         "total_users": total_users,
         "total_ads": total_ads,
         "total_orders": total_orders,
         "current_revenue": current_revenue,   # new
-        "manager_revenue" : manager_revenue
+        "manager_revenue" : manager_revenue,
+        'user_roles': user_roles_count,
+        'orders_evolution' : list(orders_evolution) 
     })
+
+
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -650,3 +678,136 @@ class PriceRuleDeleteView(generics.DestroyAPIView):
     queryset = PriceRule.objects.all()
     serializer_class = PriceRuleSerializer  # Optionnel, mais peut être utile pour la validation 
     permission_classes = [IsAdminUser] 
+
+
+from django.shortcuts import render
+from .models import PromotionImage
+from .serializers import PromotionImageSerializer # You'll need to make a Serializer if you haven't already! 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response 
+
+
+# Note, the use of  @permission_classes. If using JWTs, ensure you have JWT auth setup 
+@api_view(['GET']) 
+@permission_classes([IsAdminUser]) 
+def get_promotion_images(request):
+    promotion_images = PromotionImage.objects.all() # retrieve all images (check your database for foreign keys and filtering logic here).
+    serializer = PromotionImageSerializer(promotion_images, many=True)  # Make sure to properly serializer to a response
+    return Response(serializer.data)
+
+@api_view(['POST']) 
+@permission_classes([IsAdminUser])  # For authorization!  
+def add_promotion_image_url(request):
+  if request.method == 'POST': 
+    new_url = request.data.get('url') # The data from the post
+
+    if not new_url:
+        return Response({'error': 'L’URL de l’image est requise.'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    try: 
+     # Ensure it's not more than 5 (you need the correct Django code logic for counting, it
+      # will differ if you are storing them per User). If storing in a more general
+      # context you can try to limit the number of URLs.  
+        current_count = PromotionImage.objects.count() 
+        if current_count >= 5: 
+            return Response({'error': 'Limite de 5 images atteinte.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        new_image = PromotionImage.objects.create(user=user, url=new_url) 
+        new_image.save() 
+
+        serializer = PromotionImageSerializer(new_image) #  For a JSON response
+        return Response(serializer.data)
+    except Exception as e:
+        return Response({'error': f'Erreur lors de l\'ajout de l\'image: {e}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+from django.shortcuts import render
+import cloudinary.uploader
+from django.http import JsonResponse
+
+# Assuming you have the following import
+# from .models import PromotionImage
+@api_view(['POST']) 
+@permission_classes([])  # For authorization!  
+def upload_promotion_image(request):
+    if request.method == 'POST' and request.FILES.get('image'):
+        try:
+            # Extracting image data from the request.FILES dictionary
+            image = request.FILES['image'] 
+
+            # Optional resizing or other validation here before upload
+            # You can resize the image, change format, crop it. etc.
+
+            result = cloudinary.uploader.upload(
+                image, 
+                #folder="my_folder_for_promotion_images" # Optionally you could make a special cloudinary folder 
+            )
+            # Debugging:  print the result (or you can add logging for Django).
+            print(result) 
+            # Response sends URL and the message 'success'
+            return JsonResponse({'success': True, 'url': result['secure_url']})
+
+        except Exception as e:
+            print(f"Error during image upload: {e}") # Debugging for your Django view
+            # Sending a 'success': False, and error message. You can return the error message or custom message here. 
+            return JsonResponse({'success': False, 'message': str(e)}, status=400)
+
+    return JsonResponse({'success': False, 'message': 'Veuillez choisir un fichier.'}, status=400) 
+
+
+
+
+from .models import PromotionImage  #  Ensure that you import PromotionImage
+# ... (your existing views.py imports)
+
+from rest_framework.response import Response
+from django.http import JsonResponse
+from rest_framework import status
+
+# ... other parts of views ... 
+
+ 
+  # Update View: For storing URLs.  
+@api_view(['PATCH'])
+@permission_classes([IsAdminUser]) # make sure to secure 
+def update_cloudinary_config(request, format=None): 
+    cloudinary_cloud_name = request.data.get('cloudinary_cloud_name') 
+    cloudinary_api_key = request.data.get('cloudinary_api_key')
+    cloudinary_api_secret = request.data.get('cloudinary_api_secret') 
+
+    if not all([cloudinary_cloud_name, cloudinary_api_key, cloudinary_api_secret]):
+            return Response({'error': 'All Cloudinary fields are required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        #  You will likely have to handle authentication or user id  
+        # if this is related to a User here - for example, your Django JWT
+        # code (if you are using JWTs). You may need to pass the `User.objects.get` as well 
+        # assuming you want to attach this to the current User
+        user = request.user # or how to access your user is your logic
+
+        
+        # Create your models (if they don't already exist) 
+        # config, created = Config.objects.update_or_create(
+        #       key="cloudinary_cloud_name",
+        #        defaults={'value': cloudinary_cloud_name} 
+        #   ) 
+        # config, created = Config.objects.update_or_create( 
+        #       key='cloudinary_api_key', 
+        #       defaults={'value': cloudinary_api_key} 
+        #   )
+        # config, created = Config.objects.update_or_create( 
+        #       key='cloudinary_api_secret',
+        #       defaults={'value': cloudinary_api_secret} 
+        #   ) 
+        # You might have to load settings to update here if they have already been initialized in a settings.py function!
+        
+        # Use the new values with Cloudinary.config
+        cloudinary.config(
+            cloud_name=cloudinary_cloud_name,  
+            api_key=cloudinary_api_key,  
+            api_secret=cloudinary_api_secret 
+        ) 
+
+        return Response({'message': 'Configuration mise à jour avec succès.'})
+    except Exception as e:
+        return Response({'error': f'Erreur lors de la mise à jour: {e}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

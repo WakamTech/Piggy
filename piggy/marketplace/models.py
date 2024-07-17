@@ -16,6 +16,13 @@ from .validators import validate_phone
 
 import uuid
 
+class Config(models.Model):
+    key = models.CharField(max_length=200, unique=True)
+    value = models.CharField(max_length=500)
+
+    def __str__(self):
+        return self.key
+
 class CustomUserManager(BaseUserManager):
     def create_user(self, phone, password=None, **extra_fields):
         if not phone:
@@ -197,6 +204,14 @@ class Config(models.Model):
     def __str__(self):
         return self.key
 
+class PromotionImage(models.Model): 
+          user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True) # Assuming you are saving with logged in user. 
+          url = models.URLField(max_length=2000, blank=True, null=True)  # Use URLField for image URL. 
+
+          def __str__(self): 
+               return self.url  
+    
+     # If you have your settings model: 
 
 
 from django.db import models

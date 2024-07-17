@@ -1,3 +1,4 @@
+
 // Variables globales
 const loginPage = document.getElementById('loginPage');
 const appContent = document.getElementById('appContent');
@@ -9,17 +10,31 @@ const totalUsersElement = document.getElementById('totalUsers');
 const totalAdsElement = document.getElementById('totalAds');
 const totalOrdersElement = document.getElementById('totalOrders');
 const totalRevenueElement = document.getElementById('totalRevenue');
+const totalManagerRevenueElement = document.getElementById('managerRevenue');
+
 const confirmDeleteModal = document.getElementById('confirmDeleteModal');
 const confirmDeleteButton = document.getElementById('confirmDeleteButton');
 const confirmValidateModal = document.getElementById('confirmValidateModal');
 const confirmValidateButton = document.getElementById('confirmValidateButton');
+const userChartElement = document.getElementById('userChart');
 const loadingElement = document.getElementById('loading');
 const logoutButton = document.getElementById('logoutButton');
+const orderChartElement = document.getElementById('orderChart');
+let promotionImages = [];
 let itemIdToDelete; // Variable pour stocker l'ID de l'élément à supprimer
 let itemIdToValidate; // Variable pour stocker l'ID de l'élément à valider
+let userChart;
+let userRoles;
 
-  // ... (Votre code existant)
+let orderChart;
+let orderDatat;
+let itemIdToEdit;
+
+// ... (Votre code existant)
 const priceRulesTable = document.getElementById('priceRulesTable').getElementsByTagName('tbody')[0];
+
+
+
 
 // Fonction pour gérer la connexion
 async function login(phone, password) {
@@ -74,7 +89,7 @@ function logout() {
 }
 
 // Afficher le contenu de la page en fonction de l'ancre de l'URL
-function showPageContent(page = 'dashboard') { 
+function showPageContent(page = 'dashboard') {
     const contentDivs = document.querySelectorAll('.content > div');
     contentDivs.forEach(div => div.style.display = 'none');
 
@@ -88,7 +103,7 @@ function showPageContent(page = 'dashboard') {
 const sidebarLinks = document.querySelectorAll('.sidebar ul.nav li a');
 sidebarLinks.forEach(link => {
     link.addEventListener('click', (event) => {
-        event.preventDefault(); 
+        event.preventDefault();
         const targetPage = event.target.getAttribute('href').substring(1);
         showPageContent(targetPage);
     });
@@ -107,12 +122,12 @@ function updateUsersTable(users) {
         const roleCell = row.insertCell();
         const statusCell = row.insertCell();
         const actionsCell = row.insertCell();
+        row.setAttribute('data-item-id', user.id); //  Add this line
 
-        idCell.textContent = user.id;
 
         // Vérifiez si 'image' est défini avant de l'utiliser
-        photoCell.innerHTML = user.image 
-            ? `<img src="${user.image}" alt="Photo de profil" class="user-image">` 
+        photoCell.innerHTML = user.image
+            ? `<img src="${user.image}" alt="Photo de profil" class="user-image">`
             : `<img src="https://via.placeholder.com/50" alt="Photo de profil" class="user-image">`;
 
         fullNameCell.textContent = user.full_name;
@@ -120,8 +135,17 @@ function updateUsersTable(users) {
         roleCell.textContent = user.role;
         statusCell.textContent = user.is_active ? 'Actif' : 'Inactif';
         actionsCell.innerHTML = `
-            <a href="#" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-item-id="${user.id}" data-delete-url="/api/admin/users/${user.id}/delete/"><i class="bi bi-trash"></i></a>
-        `;
+          <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" 
+            data-bs-target="#editUserModal"
+          ><i class="bi bi-pencil"></i></a>
+
+          <a href="#" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" 
+            data-item-id="${user.id}" 
+            data-delete-url="/api/admin/users/${user.id}/delete/"  
+          >
+             <i class="bi bi-trash"></i>
+         </a>
+     `;
     });
 }
 
@@ -226,7 +250,7 @@ function updateOrdersTable(orders) {
 
 // --- Modification pour l'affichage des règles --- 
 function updatePriceRulesTable(priceRules) {
-    priceRulesTable.innerHTML = ''; 
+    priceRulesTable.innerHTML = '';
     priceRules.forEach(rule => {
         const row = priceRulesTable.insertRow();
         row.insertCell().textContent = rule.id;
@@ -234,7 +258,7 @@ function updatePriceRulesTable(priceRules) {
         row.insertCell().textContent = rule.min_price;
         row.insertCell().textContent = rule.max_price || "Illimité"; // Affichage plus clair
         row.insertCell().textContent = rule.price_increase_percentage ? rule.price_increase_percentage + "%" : "-"; //  Ajout du signe % 
-        row.insertCell().textContent = rule.fixed_price || "-"; 
+        row.insertCell().textContent = rule.fixed_price || "-";
         row.insertCell().innerHTML = ` 
         <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addPriceRuleModal"  
             data-rule-id="${rule.id}" 
@@ -264,11 +288,11 @@ const addPriceRuleModal = document.getElementById('addPriceRuleModal');
 const priceRuleForm = document.getElementById('priceRuleForm');
 
 addPriceRuleModal.addEventListener('show.bs.modal', (event) => {
-    const button = event.relatedTarget; 
-    const ruleId = button ? button.getAttribute('data-rule-id') : null; 
+    const button = event.relatedTarget;
+    const ruleId = button ? button.getAttribute('data-rule-id') : null;
 
     // Réinitialisation du formulaire
-    priceRuleForm.reset(); 
+    priceRuleForm.reset();
     document.getElementById('ruleId').value = '';
 
     // Si on modifie une règle existante
@@ -280,9 +304,9 @@ addPriceRuleModal.addEventListener('show.bs.modal', (event) => {
         document.getElementById('min_price').value = button.getAttribute('data-min-price');
         document.getElementById('max_price').value = button.getAttribute('data-max-price');
         document.getElementById('price_increase_percentage').value = button.getAttribute('data-percentage');
-        document.getElementById('fixed_price').value = button.getAttribute('data-fixed-price'); 
+        document.getElementById('fixed_price').value = button.getAttribute('data-fixed-price');
     } else {
-        document.getElementById('addPriceRuleModalLabel').textContent = "Ajouter une Règle de Prix"; 
+        document.getElementById('addPriceRuleModalLabel').textContent = "Ajouter une Règle de Prix";
     }
 });
 
@@ -290,10 +314,10 @@ addPriceRuleModal.addEventListener('show.bs.modal', (event) => {
 priceRuleForm.addEventListener('submit', async (event) => {
     event.preventDefault();
 
-    const ruleId = document.getElementById('ruleId').value; 
-    const method = ruleId ? 'PUT' : 'POST'; 
-    const endpoint = ruleId ? `/api/admin/price_rules/${ruleId}/` : '/api/admin/price_rules/'; 
-    
+    const ruleId = document.getElementById('ruleId').value;
+    const method = ruleId ? 'PUT' : 'POST';
+    const endpoint = ruleId ? `/api/admin/price_rules/${ruleId}/` : '/api/admin/price_rules/';
+
     // Créer l'objet data pour la requête fetch
     const data = {
         role: document.getElementById('role').value,
@@ -302,33 +326,33 @@ priceRuleForm.addEventListener('submit', async (event) => {
         price_increase_percentage: parseFloat(document.getElementById('price_increase_percentage').value) || null, // Utilise parseFloat et vérifie si NaN
         fixed_price: document.getElementById('fixed_price').value ? parseInt(document.getElementById('fixed_price').value, 10) : null
     };
-    console.log("Data being sent",data)
+    console.log("Data being sent", data)
 
     try {
-        const response = await fetch(endpoint, { 
-            method: method, 
+        const response = await fetch(endpoint, {
+            method: method,
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(data), 
+            body: JSON.stringify(data),
         });
         console.log(response)
 
         if (response.ok) {
             // Fermer le modal
-            bootstrap.Modal.getInstance(addPriceRuleModal).hide(); 
+            bootstrap.Modal.getInstance(addPriceRuleModal).hide();
 
             // Recharger les données
             loadData();
         } else {
             // Gestion des erreurs 
-            const errorData = await response.json(); 
-            console.error('Erreur serveur :', errorData);  
+            const errorData = await response.json();
+            console.error('Erreur serveur :', errorData);
         }
     } catch (error) {
         // Gestion des erreurs réseau ou autres 
-        console.error('Erreur :', error);  
+        console.error('Erreur :', error);
     }
 });
 
@@ -340,8 +364,416 @@ function updateDashboardStats(data) {
     totalUsersElement.textContent = data.total_users;
     totalAdsElement.textContent = data.total_ads;
     totalOrdersElement.textContent = data.total_orders;
-    totalRevenueElement.textContent = data.revenue ? data.revenue.toFixed(2) : '0.00'; // Affiche le revenu avec 2 décimales
+    totalRevenueElement.textContent = data.current_revenue ? data.current_revenue.toFixed(2) : '0.00'; // Affiche le revenu avec 2 décimales
+    totalManagerRevenueElement.textContent = data.manager_revenue ? data.current_revenue.toFixed(2) : '0.00'; // Affiche le revenu avec 2 décimales
+    userRoles = data.user_roles
+    //console.log(data.orders_evolution)
+    orderDatat = data.orders_evolution
 }
+
+// ... Your existing JavaScript code ... 
+
+//  ----  Handle Cloudinary Config Saving ---
+
+// ... rest of the existing code
+
+// ...
+
+async function loadPromotionImages() {
+    try {
+        // Fetch promotion URLs from API (e.g. to display them in the UI)  
+        const response = await fetch('/api/admin/promotion_images/', {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error: HTTP ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        if (data) {
+            promotionImages = data.map(img => img.url);
+            console.log('promotionImages:', promotionImages);
+            //   ... if you are re-displaying the URLs 
+            // updateImageUrls(); // Use this to update your HTML list of image urls (assuming this exists) 
+        }
+
+    } catch (error) {
+        // ...   Log or display errors - for user experience
+        console.error('Error loading promotion images', error);
+        alert('Error: Unable to fetch Promotion Images.');
+    }
+
+}
+// ---- Handle Cloudinary Config Saving ---- 
+// Make sure this fetches the appropriate URLs
+document.getElementById('saveCloudinarySettings').addEventListener('click', async (event) => {
+    const cloudinary_cloud_name = document.getElementById('cloudinary_cloud_name').value;
+    const cloudinary_api_key = document.getElementById('cloudinary_api_key').value;
+    const cloudinary_api_secret = document.getElementById('cloudinary_api_secret').value;
+
+    try {
+        // Your post logic to the correct url (from your Django REST view): 
+        const response = await fetch('/api/admin/configs/cloudinary', { // Update to match the endpoint  
+            // Update method for new view (cloudinary_config)  
+            method: 'PATCH',  // Use PATCH 
+            headers: {
+                //  ... Headers: Content-Type, authorization
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({
+                'cloudinary_cloud_name': cloudinary_cloud_name,
+                'cloudinary_api_key': cloudinary_api_key,
+                'cloudinary_api_secret': cloudinary_api_secret
+            })
+        });
+
+        if (response.ok) {
+            console.log('Cloudinary configuration updated!');
+            // If there are changes, such as to the images: 
+            //  reloadPromotionImages(); // This might trigger 
+            // other calls (and refreshes) of other functions! 
+        }
+
+    } catch (error) {
+        //   ...  Error Handling (make sure it will be returned)
+        //   You might alert the user  
+        console.error('Error updating Cloudinary configs:', error);
+        alert('Erreur lors de la mise à jour de la configuration Cloudinary.');
+        return;
+    }
+
+});
+
+// ---  Image Upload Function  ---  (with a Helper) 
+document.getElementById('uploadPromotionImage').addEventListener('click', () => {
+    const imageFile = document.getElementById('promotionImageUpload').files[0];
+    const altText = document.getElementById('promotionImageAltText').value;
+
+    // ... rest of the image upload (error handling, form, etc.).
+
+    if (!imageFile) {
+        alert("Veuillez choisir une image!");
+        return;
+    }
+
+    // (Update the image using this view (use 'fetch' call)!
+    uploadPromotionImage(imageFile, altText);
+});
+
+async function uploadPromotionImage(imageFile, altText) {
+    try {
+        // 1. Create FormData
+        const formData = new FormData();
+        formData.append('image', imageFile); // Appending image to form data
+        formData.append('altText', altText);  // Appending Alt text, if applicable
+
+        // 2. Send the fetch Request
+        const response = await fetch('/api/admin/upload_promotion_image/', {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!response.ok) {
+            //  --- Handle errors, including an error response. 
+            console.error("Error uploading image: ", response);
+            const data = await response.json(); // This will likely get an "error" message from your Django View. 
+            alert(`Error uploading image: ${data.message || data.error || 'General error'}.`);
+            return; // stop executing if there is an error  
+        }
+
+        // 3. Get the Image URL (if success) 
+        const data = await response.json();
+        console.log(data)
+
+        // 4. Success! 
+        // (Note, "data.url" or any other way you will need to check how 
+        // you want to structure your response - such as sending the 
+        // ID if you also need this to be added into your 
+        //   "promotionImages" array:
+        if (data.success) {
+            const cloudinaryImageURL = data.url;  // Update image URL
+
+            if (cloudinaryImageURL) {
+                // (Reload promotion images array/display it using  
+                // your promotionImages array that you are using - or using a function that makes a new GET call and refreshes it!  
+                // Such as your `loadPromotionImages() ` that was used for initial loading, to update on the screen -  (if you are updating in a "view")   
+
+                console.log(cloudinaryImageURL)
+
+                //   If there is a user (and if your Django logic 
+                //   allows this to save it to your database for a user!)  
+                //  // Add this image to your "promotionImages" array:
+                // promotionImages.push(cloudinaryImageURL) // or handle your UI for promotionImages (if a <ul>, etc).
+
+                // Make the call to your backend! Make a new 
+                // `loadPromotionImages` (if you already have it defined)!
+
+                loadPromotionImages();  // reload your promotion images, this
+                // assumes that it's going to get new values (by going
+                // through your Django endpoint to reload).  
+                // if your images are displayed via `<li>`s, ensure this call
+                // refreshes them - for a better UI, instead of reloading, just
+                // do it with JS after it's fetched.  (the list might need to be 
+                // added, or you need to modify your data to make a more
+                //  dynamic, cleaner setup.
+
+            } else {
+                // Handle error (alert message).
+                console.error("Error getting promotion image URL: ", response);
+                // Handle error appropriately in front-end (alert to user). 
+            }
+
+        } else {
+            // ...  Handle the failure response ... (e.g., alert the user, and give any "error messages") 
+            alert('Image upload failed.')  // Handle errors in front-end and backend
+            return;
+            // Don't proceed (it'll continue) if there is a failure during this
+            //   image uploading
+        }
+
+    } catch (error) {
+        // ... handle errors - could be network, timeout, etc ...  (use `console.error`, use `alert`,  use the Javascript Error method (such as throwing errors!) for more robust control
+    }
+
+}
+
+// ---  Add a new URL ---- (For Image URLs):
+// document.getElementById('uploadPromotionImage').addEventListener('click', async (event) => {
+//     // const newImageUrl = promotionImageUrlInput.value.trim();
+
+//     // if (!newImageUrl || (!newImageUrl.startsWith('http') && !newImageUrl.startsWith('https'))) {
+//     //     alert('Veuillez saisir une URL d’image valide.');
+//     //     return;
+//     // }
+
+//     try {
+//         // ... ( your post fetch)
+
+//         const response = await fetch('/api/admin/promotion_images/add/', {
+//             method: 'POST',
+//             headers: {
+//                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
+//                 'Content-Type': 'application/json'
+//             },
+//             body: JSON.stringify({ url: newImageUrl }),
+//         });
+
+//         if (!response.ok) {
+//             // Handle errors!  ... (If 5 max URLs, return to front end and 
+//             // prevent it from showing. This can all be done with the same
+//             // backend logic.
+//         }
+
+//         const result = await response.json();
+
+//         // promotionImages.push(newImageUrl); // Note this: "push" onto array.
+//         //   You are using this array if the user is typing in the images: 
+//         //  --- (Your HTML is where this array will need to be iterated)
+
+//         // promotionImageUrlInput.value = "";  // Resetting 
+
+//         // ... Update UI after success to add a new Image or update  
+//         //        your view of the promotion Images list on the  page!
+
+//     } catch (error) {
+//         console.error('Error saving promotion image url:', error);
+//         // ... (User Alerts /  Displaying)
+//     }
+// });
+
+//  --- (Existing  Code for "fetch", loading)  ----
+
+
+//  --- ... Your existing JavaScript for your application ... ---
+
+
+// Fonction pour mettre à jour le graphique en camembert
+function updateUserChart(userRoles) {
+    if (userChart) {
+        userChart.destroy();
+    }
+    userChart = new Chart(userChartElement, {
+        type: 'pie',
+        data: {
+            labels: Object.keys(userRoles),
+            datasets: [{
+                data: Object.values(userRoles),
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
+                hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                }
+            }
+        }
+    });
+}
+
+// Edit user role: 
+usersTable.addEventListener('click', (event) => {
+    if (event.target.classList.contains('btn-primary')) {
+        // Edit button is pressed: 
+        const userId = event.target.closest('tr').getAttribute('data-item-id');
+        itemIdToEdit = userId;
+
+        //  Show Edit User Role modal
+        const editUserForm = document.getElementById('editUserForm');
+        const roleDropdown = editUserForm.querySelector('#userRole');
+        editUserForm.querySelector('#userId').value = userId; // Update User ID in Form
+
+        fetch(`/api/users/${userId}/`, { // API call to fetch user data 
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            },
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Error: HTTP ${response.status} ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(userData => {
+                if (!userData.role) {
+                    console.error("Error fetching user role data!");
+                } else {
+                    roleDropdown.value = userData.role;
+                }
+            })
+            .catch(error => {
+                console.error('Error updating user role data:', error);
+                // Handle the error gracefully 
+            })
+
+
+    }
+});
+
+document.getElementById('editUserForm').addEventListener('submit', (event) => {
+    event.preventDefault(); // Prevents default form submit
+    const form = event.target;
+
+    const userId = itemIdToEdit;
+    const newRole = form.querySelector('#userRole').value;
+
+    if (!userId) {
+        console.error("Error: Missing userId for the edit form.");
+        return; // Return and do nothing more. 
+    }
+
+    fetch(`/api/admin/users/${userId}/`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify({ role: newRole })
+    })
+        .then(response => {
+            if (response.ok) {
+                // Reload users table for data to refresh 
+                loadData();
+
+                // Close Modal after submitting.  
+                const editUserModal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
+                editUserModal.hide();
+            } else {
+                // ... handle error, likely get error response data here. 
+            }
+        })
+        .catch(error => {
+            // handle the error more gracefully
+            console.error('Error saving user role data', error)
+        });
+
+
+});
+
+function updateOrderChart(orderDatat) {
+    if (orderChart) {
+        orderChart.destroy();
+    }
+
+    const dates = orderDatat.map(item => {
+        let formattedDate = new Date(item.created_at__date); // Use the JS `Date` constructor
+        //  You can still use moment to format this date object further if you wish!
+        //  Example (you will probably not need this as it was the default output of `DateTimeField`) 
+        //  const datePart = moment(formattedDate).format('DD/MM'); // Use this only if needed to format 
+        return formattedDate;
+    });
+
+    console.log(dates);
+    const orderCounts = orderDatat.map(item => item.count);
+
+    orderChart = new Chart(orderChartElement, {
+        type: 'line',
+        data: {
+            labels: dates,
+            datasets: [{
+                label: 'Nombre de Commandes',
+                data: orderCounts,
+                borderColor: 'rgb(54, 162, 235)',
+                borderWidth: 1,
+                tension: 0.2
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    type: 'time',
+                    time: {
+                        unit: 'day',
+                        displayFormats: {
+                            day: 'dd/MM' // Use Moment for display formatting if desired
+                        }
+                    },
+                },
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+
+async function loadDashboardData() {
+    try {
+        const response = await fetch('/api/dashboard/', { // Use the correct API endpoint for dashboard stats
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Erreur HTTP : ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        // Update Dashboard Stats 
+        updateDashboardStats(data);
+
+        // Update User Roles Chart
+
+
+    } catch (error) {
+        console.error('Erreur lors du chargement des données du tableau de bord :', error);
+        // Handle errors by showing error messages to the user 
+    } finally {
+        hideLoading();
+    }
+}
+
 
 // Gérer la suppression d'un élément
 confirmDeleteModal.addEventListener('show.bs.modal', event => {
@@ -495,18 +927,24 @@ async function loadData() {
 
         const priceRulesResponse = await fetch('/api/admin/price_rules/', {
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`, 
-            }, 
-        }); 
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            },
+        });
 
         if (!priceRulesResponse.ok) {
             throw new Error('Erreur lors du chargement des règles de prix.');
         }
 
-        const priceRulesData = await priceRulesResponse.json(); 
+        const priceRulesData = await priceRulesResponse.json();
         updatePriceRulesTable(priceRulesData); // Met à jour le tableau HTML
 
-        
+        updateUserChart(userRoles);
+        updateOrderChart(orderDatat);
+
+        await loadPromotionImages()
+
+
+
     } catch (error) {
         console.error('Erreur:', error);
     } finally {
