@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 from .views import (
     UserListView, UserUpdateView, UserRetrieveView, UserDeleteView, UserAdsListView,  UserOrdersListView, 
-    AdListView, AdValidateView, AdDeleteView, ButcheryAdsListView,UserOrderListView, UserOrderDetailView, 
+    AdListView, AdValidateView, AdDeleteView, get_butchery_ads,UserOrderListView, UserOrderDetailView, 
     OrderListView, OrderUpdateView, PriceRuleListView, OrderDeleteView, UserNotificationsView, save_fcm_token, update_order_status,
     get_stats, get_configs, add_to_cart, get_user_cart, CurrentUserView, get_nearby_farmers_ads, get_nearby_buyers_ads, PriceRuleDeleteView, add_promotion_image_url, get_promotion_images
 )
@@ -26,7 +26,7 @@ urlpatterns = [
     path('delivery_fees/', views.DeliveryFeeListCreateView.as_view(), name='delivery_fee_list_create'),
     path('delivery_fees/<int:pk>/', views.DeliveryFeeRetrieveUpdateDestroyView.as_view(), name='delivery_fee_detail'),
     path('butcheries/', views.ButcheryListCreateView.as_view(), name='butchery_list_create'),
-    path('butchery_ads/', ButcheryAdsListView.as_view(), name='butchery-ads-list'),
+    path('butchery_ads/', get_butchery_ads, name='butchery-ads-list'),
     path('butcheries/<int:pk>/', views.ButcheryRetrieveUpdateDestroyView.as_view(), name='butchery_detail'),
     path('orders/', views.OrderListCreateView.as_view(), name='order_list_create'),
     path('orders/<int:pk>/', views.OrderRetrieveUpdateDestroyView.as_view(), name='order_detail'),
