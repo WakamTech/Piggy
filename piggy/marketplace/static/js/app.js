@@ -908,6 +908,7 @@ async function loadData() {
         }
 
         const adsData = await adsResponse.json();
+        console.log(adsData);
         updateAdsTable(adsData);
 
         // Charger les commandes
