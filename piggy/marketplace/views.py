@@ -565,7 +565,7 @@ class AdValidateView(APIView):
 
 class AdDeleteView(generics.DestroyAPIView):
     queryset = Ad.objects.all()
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsOwnerOrAdmin]
 
 # Order Management
 class OrderListView(generics.ListAPIView):
