@@ -261,15 +261,6 @@ class AdRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     def patch(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
     
-    def delete(self, request, *args, **kwargs):
-        print("called")
-        logger.debug("Delete method called")
-        response = super().delete(request, *args, **kwargs)
-        logger.debug("Delete operation completed with status %s", response.status_code)
-        return response
-    
-    def perform_destroy(self, instance):
-        instance.delete()
 
 class DeliveryFeeListCreateView(generics.ListCreateAPIView):
     queryset = DeliveryFee.objects.all()
