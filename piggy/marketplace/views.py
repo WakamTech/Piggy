@@ -216,7 +216,7 @@ class AdListCreateView(generics.ListCreateAPIView):
             
             # Si une règle existe, appliquer la logique de la règle
             if rule.fixed_price is not None:
-                new_price = rule.fixed_price
+                new_price = price + rule.fixed_price
             elif rule.price_increase_percentage is not None:
                 increase_amount = price * (rule.price_increase_percentage / 100) 
                 new_price = price + increase_amount 
