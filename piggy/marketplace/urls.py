@@ -4,7 +4,7 @@ from .views import (
     UserListView, UserUpdateView, UserRetrieveView, UserDeleteView, UserAdsListView,  UserOrdersListView, 
     AdListView, AdValidateView, AdDeleteView, get_butchery_ads,UserOrderListView, UserOrderDetailView, 
     OrderListView, OrderUpdateView, PriceRuleListView, OrderDeleteView, UserNotificationsView, save_fcm_token, update_order_status,
-    get_stats, get_configs, add_to_cart, get_user_cart, CurrentUserView, get_nearby_farmers_ads, get_nearby_buyers_ads, PriceRuleDeleteView, add_promotion_image_url, get_promotion_images
+    get_stats, get_configs, delete_ad, add_to_cart, get_user_cart, CurrentUserView, get_nearby_farmers_ads, get_nearby_buyers_ads, PriceRuleDeleteView, add_promotion_image_url, get_promotion_images
 )
 
 urlpatterns = [
@@ -53,7 +53,7 @@ urlpatterns = [
     path('get_user_cart/', get_user_cart, name='get_user_cart'),
     path('user/notifications/', UserNotificationsView.as_view(), name='user-notifications'),
     path('empty_cart/', views.empty_cart, name='empty_cart'),
-    # autres routes
+    path('delete_ad/', delete_ad, name='delete-ad'),
     path('ads/nearby_farmers/', get_nearby_farmers_ads, name='nearby_farmers_ads'),
     path('ads/nearby_buyers/', get_nearby_buyers_ads, name='nearby_buyers_ads'),
     path('save_fcm_token/', save_fcm_token, name='save_fcm_token'),
