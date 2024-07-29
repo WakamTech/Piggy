@@ -260,6 +260,27 @@ class AdRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
     def patch(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
+
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import IsAdminUser
+from .models import Ad
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def delete_ad(request):
+    ad_id = request.data.get('ad_id')
+
+    if not ad_id:
+        return Response({"error": "Missing ad_id"}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        ad = Ad.objects.get(pk=ad_id)
+        ad.delete()
+        return Response({"message": "Ad deleted successfully."}, status=status.HTTP_200_OK)
+    except Ad.DoesNotExist:
+        return Response({"error": "Ad not found."}, status=status.HTTP_404_NOT_FOUND)
     
 
 class DeliveryFeeListCreateView(generics.ListCreateAPIView):
