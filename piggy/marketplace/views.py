@@ -16,7 +16,7 @@ from django.db import models
 import logging
 from django.contrib.admin.views.decorators import staff_member_required
 logger = logging.getLogger(__name__)
-
+from django.contrib.auth import get_user_model
 from .serializers import ConfigSerializer
 from rest_framework import generics
 from .models import PriceRule
@@ -24,24 +24,75 @@ from .serializers import PriceRuleSerializer
 from datetime import timedelta, date
 from django.db.models import Count
 import os
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import status
+from .serializers import FCMTokenSerializer 
 
 TWILIO_ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID')
 TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN')
 TWILIO_PHONE_NUMBER = os.getenv('TWILIO_PHONE_NUMBER')
-
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from django.db.models import Sum, F
 
 import os
 import firebase_admin
 from firebase_admin import credentials, auth
 
 from rest_framework.renderers import JSONRenderer
+from django.shortcuts import render
+from .models import User, Ad, Order
+from django.contrib.auth.decorators import login_required, user_passes_test
+from .models import PriceRule
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import IsAdminUser
+from .models import Ad
+from rest_framework import generics, permissions, status
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from .models import User, Ad, Order
+from .serializers import UserSerializer, AdSerializer, OrderSerializer
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from .models import Ad
+from geopy.geocoders import Nominatim
+from geopy.distance import distance as geopy_distance
+from rest_framework import generics
+#... vos autres imports
+from django.shortcuts import render
+from .models import PromotionImage
+from .serializers import PromotionImageSerializer # You'll need to make a Serializer if you haven't already! 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response 
+from django.shortcuts import render
+import cloudinary.uploader
+from django.http import JsonResponse
+from .models import PromotionImage  #  Ensure that you import PromotionImage
+# ... (your existing views.py imports)
+
+from rest_framework.response import Response
+from django.http import JsonResponse
+from rest_framework import status
+# In your Django app's views.py
+from django.http import JsonResponse
+from django.contrib.auth.models import User
+from firebase_admin import messaging
+from django.views.decorators.csrf import csrf_exempt
+# ... other parts of views ... 
+
+User = get_user_model()
+
 
 class UTF8JSONRenderer(JSONRenderer):
     charset = 'utf-8'
 
-from django.shortcuts import render
-from .models import User, Ad, Order
-from django.contrib.auth.decorators import login_required, user_passes_test
+
 def is_admin(user):
     return user.groups.filter(name='Administrateurs').exists()
 
@@ -148,11 +199,7 @@ def get_user_id(request):
     user_id = request.user.id
     return Response({"user_id": user_id})
 
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework import status
-from .serializers import FCMTokenSerializer 
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -198,7 +245,6 @@ class UserOrdersListView(generics.ListAPIView):
         user_id = self.kwargs['user_id']
         return Order.objects.filter(user__id=user_id)
 
-from .models import PriceRule
 
 class AdListCreateView(generics.ListCreateAPIView):
     queryset = Ad.objects.all()
@@ -231,16 +277,7 @@ class AdListCreateView(generics.ListCreateAPIView):
             elif role == 'buyer':  # Utiliser 'elif' pour une meilleure lisibilité
                 new_price = price 
             elif role == 'farmer': 
-                if 1300 <= price <= 1599:  #  Syntaxe simplifiée 
-                    new_price = 1900
-                elif 1600 <= price <= 1849:
-                    new_price = 2100
-                elif 1850 <= price <= 1999:
-                    new_price = 2200
-                elif 2000 <= price <= 2500:
-                    new_price = price + 250
-                elif price > 2500:
-                    new_price = price + 250
+                new_price = price + 200
 
         # Enregistrer l'annonce avec le prix ajusté
         serializer.save(user=self.request.user, price_per_kg=new_price, initial_price_per_kg=initial_price)
@@ -259,13 +296,10 @@ class AdRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
 
     def patch(self, request, *args, **kwargs):
+        print("\n\n\nnnn")
         return self.partial_update(request, *args, **kwargs)
 
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.permissions import IsAdminUser
-from .models import Ad
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -447,12 +481,7 @@ def calculate_delivery_fee(request):
     return Response({"total_fee": total_fee})
 
 
-from rest_framework import generics, permissions, status
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from .models import User, Ad, Order
-from .serializers import UserSerializer, AdSerializer, OrderSerializer
+
 
 # Permission classes to restrict access to admin users only
 class IsAdminUser(permissions.BasePermission):
@@ -460,7 +489,7 @@ class IsAdminUser(permissions.BasePermission):
         return request.user and request.user.is_authenticated and request.user.role == 'admin'
 
 
-
+User = get_user_model()
 
 @api_view(['GET'])
 @permission_classes([])  # Cette ligne permet l'accès sans authentification
@@ -602,15 +631,11 @@ class OrderDeleteView(generics.DestroyAPIView):
     queryset = Order.objects.all()
     permission_classes = [IsAdminUser]
 
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from django.db.models import Sum, F
+
 
 @api_view(['GET'])
 @permission_classes([IsAdminUser])
 def get_stats(request):
-    #print(request)
     total_users = User.objects.count()
     total_ads = Ad.objects.count()
     total_orders = Order.objects.count()
@@ -649,14 +674,6 @@ def get_stats(request):
         'orders_evolution' : list(orders_evolution) 
     })
 
-
-
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from .models import Ad
-from geopy.geocoders import Nominatim
-from geopy.distance import distance as geopy_distance
-
 geolocator = Nominatim(user_agent="piggy_geocoder")
 
 @api_view(['GET'])
@@ -683,8 +700,7 @@ class PriceRuleListView(generics.ListCreateAPIView):
     def create(self, request, *args, **kwargs):
             print("Données reçues dans la vue create():", request.data)
             return super().create(request, *args, **kwargs)
-from rest_framework import generics
-#... vos autres imports
+
 
 class PriceRuleDeleteView(generics.DestroyAPIView):
     queryset = PriceRule.objects.all()
@@ -692,11 +708,7 @@ class PriceRuleDeleteView(generics.DestroyAPIView):
     permission_classes = [IsAdminUser] 
 
 
-from django.shortcuts import render
-from .models import PromotionImage
-from .serializers import PromotionImageSerializer # You'll need to make a Serializer if you haven't already! 
-from rest_framework.decorators import api_view
-from rest_framework.response import Response 
+
 
 
 # Note, the use of  @permission_classes. If using JWTs, ensure you have JWT auth setup 
@@ -733,12 +745,9 @@ def add_promotion_image_url(request):
         return Response({'error': f'Erreur lors de l\'ajout de l\'image: {e}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-from django.shortcuts import render
-import cloudinary.uploader
-from django.http import JsonResponse
 
-# Assuming you have the following import
-# from .models import PromotionImage
+
+
 @api_view(['POST']) 
 @permission_classes([])  # For authorization!  
 def upload_promotion_image(request):
@@ -769,14 +778,7 @@ def upload_promotion_image(request):
 
 
 
-from .models import PromotionImage  #  Ensure that you import PromotionImage
-# ... (your existing views.py imports)
 
-from rest_framework.response import Response
-from django.http import JsonResponse
-from rest_framework import status
-
-# ... other parts of views ... 
 
  
   # Update View: For storing URLs.  
@@ -823,3 +825,32 @@ def update_cloudinary_config(request, format=None):
         return Response({'message': 'Configuration mise à jour avec succès.'})
     except Exception as e:
         return Response({'error': f'Erreur lors de la mise à jour: {e}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+
+
+@csrf_exempt
+def send_update_notification(request):
+    if request.method == 'POST':
+        try:
+            # Fetch users or use a filter to target specific users
+            users = User.objects.all()  # or use a specific queryset
+            title = "Nouvelle mise à jour disponible"
+            body = "Une nouvelle mise à jour disponible. Vérifiez sur le play store"
+
+            for user in users:
+                if hasattr(user, 'profile') and user.profile.fcm_token:
+                    message = messaging.Message(
+                        notification=messaging.Notification(
+                            title=title,
+                            body=body,
+                        ),
+                        token=user.profile.fcm_token,
+                    )
+                    messaging.send(message)
+
+            return JsonResponse({'status': 'success', 'message': 'Notifications sent successfully'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})

@@ -254,8 +254,65 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    {% for ad in ads %}
+                                        <tr>
+                                            <td>{{ ad.id }}</td>
+                                            <td><img src="{{ ad.images.0.url }}" alt="Image de l'annonce"
+                                                    class="ad-image"></td>
+                                            <td>{{ ad.title }}</td>
+                                            <td>{{ ad.city }}</td>
+                                            <td>{{ ad.price_per_kg }}</td>
+                                            <td>{{ ad.get_status_display }}</td>
+                                            <td>
+                                                <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal"
+                                                    data-bs-target="#editAdModal" data-ad-id="{{ ad.id }}"><i
+                                                        class="bi bi-pencil"></i></a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+                    <!--  Fenêtre modale pour l'édition d'une annonce  -->
+                    <div class="modal fade" id="editAdModal" tabindex="-1" aria-labelledby="editAdModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="editAdModalLabel">Modifier une annonce</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="editAdForm">
+                                        <input type="hidden" id="adId"> <!-- Champ pour l'ID de l'annonce -->
+
+                                        <!-- Champ pour le titre -->
+                                        <div class="mb-3">
+                                            <label for="adTitle" class="form-label">Titre de l'annonce</label>
+                                            <input type="text" class="form-control" id="adTitle" name="title" required>
+                                        </div>
+
+                                        <!-- Champ pour la ville -->
+                                        <div class="mb-3">
+                                            <label for="adCity" class="form-label">Ville</label>
+                                            <input type="text" class="form-control" id="adCity" name="city" required>
+                                        </div>
+
+                                        <!-- Champ pour le prix -->
+                                        <div class="mb-3">
+                                            <label for="adPrice" class="form-label">Prix</label>
+                                            <input type="number" class="form-control" id="adPrice" name="price_per_kg"
+                                                required>
+                                        </div>
+
+                                        <!-- Vous pourriez ajouter d'autres champs à votre convenance  -->
+
+                                        <button type="submit" class="btn btn-primary">Enregistrer</button>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -310,7 +367,6 @@
                         </div>
                     </div>
 
-                    <!-- Paramètres -->
                     <!-- Paramètres -->
                     <div id="settings" style="display: none;">
                         <h2>Paramètres</h2>
@@ -377,6 +433,14 @@
                             Cloudinary</button>
                         <button type="button" class="btn btn-secondary" id="uploadPromotionImage">Télécharger
                             l'image</button>
+                    </div>
+                    <br>
+                    <br>
+                    <h3>Envoyer une notification</h3>
+                    <div class="admin-panel">
+                        <button id="send-notification-button" class="btn btn-success btn-lg mt-3">Envoyer une
+                            notification</button>
+                        <div id="notification-message"></div>
                     </div>
 
                     <!-- Modal d'ajout/modification de règle de prix -->

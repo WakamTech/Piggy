@@ -149,6 +149,43 @@ function updateUsersTable(users) {
     });
 }
 
+// Gestionnaire d'événements pour le bouton "Edit" des annonces
+adsTable.addEventListener('click', (event) => {
+    if (event.target.classList.contains('btn-primary')) {
+        const adId = event.target.getAttribute('data-ad-id');
+
+        fetch(`/api/ads/${adId}/`, { 
+
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}` 
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Erreur HTTP : ${response.status} ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(adData => {
+            const editAdForm = document.getElementById('editAdForm');
+            editAdForm.querySelector('#adId').value = adId;
+            editAdForm.querySelector('#adTitle').value = adData.title;
+            editAdForm.querySelector('#adCity').value = adData.city;
+            editAdForm.querySelector('#adPrice').value = adData.price_per_kg; 
+            // ... (Ajouter les autres champs à votre convenance) ...
+
+            // Afficher la fenêtre modale
+            const editAdModal = new bootstrap.Modal(document.getElementById('editAdModal'));
+            editAdModal.show();
+        })
+        .catch(error => {
+            console.error('Erreur lors de la récupération des données de l\'annonce :', error);
+            // Gérer l'erreur (afficher un message d'erreur à l'utilisateur)
+        });
+    }
+});
+
 // Mettre à jour le tableau des annonces
 function updateAdsTable(ads) {
     adsTable.innerHTML = '';
@@ -173,6 +210,7 @@ function updateAdsTable(ads) {
         priceCell.textContent = ad.price_per_kg;
         statusCell.textContent = ad.is_active ? 'Active' : 'Inactive';
         actionsCell.innerHTML = `
+            <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editAdModal" data-ad-id="${ad.id}"><i class="bi bi-pencil"></i></a>
             <a href="#" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#confirmValidateModal" data-ad-id="${ad.id}" data-validate-url="/api/admin/ads/${ad.id}/validate/"><i class="bi bi-check-circle"></i></a>
             <a href="#" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-item-id="${ad.id}" data-delete-url="/api/admin/ads/${ad.id}/delete/"><i class="bi bi-trash"></i></a>
         `;
@@ -371,13 +409,6 @@ function updateDashboardStats(data) {
     orderDatat = data.orders_evolution
 }
 
-// ... Your existing JavaScript code ... 
-
-//  ----  Handle Cloudinary Config Saving ---
-
-// ... rest of the existing code
-
-// ...
 
 async function loadPromotionImages() {
     try {
@@ -409,7 +440,7 @@ async function loadPromotionImages() {
 
 }
 // ---- Handle Cloudinary Config Saving ---- 
-// Make sure this fetches the appropriate URLs
+
 document.getElementById('saveCloudinarySettings').addEventListener('click', async (event) => {
     const cloudinary_cloud_name = document.getElementById('cloudinary_cloud_name').value;
     const cloudinary_api_key = document.getElementById('cloudinary_api_key').value;
@@ -490,37 +521,16 @@ async function uploadPromotionImage(imageFile, altText) {
         const data = await response.json();
         console.log(data)
 
-        // 4. Success! 
-        // (Note, "data.url" or any other way you will need to check how 
-        // you want to structure your response - such as sending the 
-        // ID if you also need this to be added into your 
-        //   "promotionImages" array:
+        
         if (data.success) {
             const cloudinaryImageURL = data.url;  // Update image URL
 
             if (cloudinaryImageURL) {
-                // (Reload promotion images array/display it using  
-                // your promotionImages array that you are using - or using a function that makes a new GET call and refreshes it!  
-                // Such as your `loadPromotionImages() ` that was used for initial loading, to update on the screen -  (if you are updating in a "view")   
-
+                
                 console.log(cloudinaryImageURL)
 
-                //   If there is a user (and if your Django logic 
-                //   allows this to save it to your database for a user!)  
-                //  // Add this image to your "promotionImages" array:
-                // promotionImages.push(cloudinaryImageURL) // or handle your UI for promotionImages (if a <ul>, etc).
-
-                // Make the call to your backend! Make a new 
-                // `loadPromotionImages` (if you already have it defined)!
-
-                loadPromotionImages();  // reload your promotion images, this
-                // assumes that it's going to get new values (by going
-                // through your Django endpoint to reload).  
-                // if your images are displayed via `<li>`s, ensure this call
-                // refreshes them - for a better UI, instead of reloading, just
-                // do it with JS after it's fetched.  (the list might need to be 
-                // added, or you need to modify your data to make a more
-                //  dynamic, cleaner setup.
+                /
+                loadPromotionImages();  
 
             } else {
                 // Handle error (alert message).
@@ -532,64 +542,15 @@ async function uploadPromotionImage(imageFile, altText) {
             // ...  Handle the failure response ... (e.g., alert the user, and give any "error messages") 
             alert('Image upload failed.')  // Handle errors in front-end and backend
             return;
-            // Don't proceed (it'll continue) if there is a failure during this
-            //   image uploading
+
         }
 
     } catch (error) {
-        // ... handle errors - could be network, timeout, etc ...  (use `console.error`, use `alert`,  use the Javascript Error method (such as throwing errors!) for more robust control
-    }
+            }
 
 }
 
-// ---  Add a new URL ---- (For Image URLs):
-// document.getElementById('uploadPromotionImage').addEventListener('click', async (event) => {
-//     // const newImageUrl = promotionImageUrlInput.value.trim();
 
-//     // if (!newImageUrl || (!newImageUrl.startsWith('http') && !newImageUrl.startsWith('https'))) {
-//     //     alert('Veuillez saisir une URL d’image valide.');
-//     //     return;
-//     // }
-
-//     try {
-//         // ... ( your post fetch)
-
-//         const response = await fetch('/api/admin/promotion_images/add/', {
-//             method: 'POST',
-//             headers: {
-//                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
-//                 'Content-Type': 'application/json'
-//             },
-//             body: JSON.stringify({ url: newImageUrl }),
-//         });
-
-//         if (!response.ok) {
-//             // Handle errors!  ... (If 5 max URLs, return to front end and 
-//             // prevent it from showing. This can all be done with the same
-//             // backend logic.
-//         }
-
-//         const result = await response.json();
-
-//         // promotionImages.push(newImageUrl); // Note this: "push" onto array.
-//         //   You are using this array if the user is typing in the images: 
-//         //  --- (Your HTML is where this array will need to be iterated)
-
-//         // promotionImageUrlInput.value = "";  // Resetting 
-
-//         // ... Update UI after success to add a new Image or update  
-//         //        your view of the promotion Images list on the  page!
-
-//     } catch (error) {
-//         console.error('Error saving promotion image url:', error);
-//         // ... (User Alerts /  Displaying)
-//     }
-// });
-
-//  --- (Existing  Code for "fetch", loading)  ----
-
-
-//  --- ... Your existing JavaScript for your application ... ---
 
 
 // Fonction pour mettre à jour le graphique en camembert
@@ -657,6 +618,62 @@ usersTable.addEventListener('click', (event) => {
     }
 });
 
+// ...  (Your existing JavaScript code) ... 
+
+// Gestionnaire d'événements pour le bouton "Enregistrer" dans la fenêtre modale de modification d'annonce
+document.getElementById('editAdForm').addEventListener('submit', async (event) => {
+    event.preventDefault(); 
+ 
+    // Récupérer les informations du formulaire
+    const adId = editAdForm.querySelector('#adId').value;
+    const adTitle = editAdForm.querySelector('#adTitle').value;
+    const adCity = editAdForm.querySelector('#adCity').value;
+    const adPrice = editAdForm.querySelector('#adPrice').value;
+
+    //  Vérifier   les données   du  formulaire avant   d'envoyer  la  requête (validation côté  client) 
+    if (!adId || !adTitle || !adCity || !adPrice) {
+        // ... Afficher une erreur à l'utilisateur  si  les  données  sont  invalides.
+        return; // Arrêter le traitement si les  données   sont   invalides
+    }
+
+    // Envoyer  une   requête   PATCH à  l'API   pour   mettre à jour   l'annonce
+    try {
+        const response = await fetch(`/api/ads/${adId}/`, { //  Remplacez  avec  l'URL de  votre  API   pour   modifier   une   annonce 
+            method: 'PATCH',  
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}` 
+            },
+            body: JSON.stringify({ 
+                title: adTitle, 
+                city: adCity,  
+                price_per_kg: parseFloat(adPrice)  //  Converti  le  prix  en   nombre  à virgule flottante  
+            })
+        });
+    
+        if (response.ok) {
+            loadData();
+
+            console.log('Annonce modifiée avec succès');
+            //   Mettre  à jour le tableau des  annonces (recharger  les  données depuis l'API) 
+
+            const editAdModal = new bootstrap.Modal(document.getElementById('editAdModal')); 
+            editAdModal.hide(); 
+
+        } else { 
+            //   Gérer   les   erreurs  (par   exemple,  afficher un   message   à l'utilisateur  si  la   requête  n'a pas  abouti  )  
+            console.error('Erreur   lors  de  la modification de  l\'annonce'); 
+            //   ... (code   pour  afficher   un   message   d'erreur   à   l'utilisateur) ...  
+        } 
+    }  catch  (error) {
+        //   Gérer   les  erreurs  (comme  des  problèmes  de réseau)
+        console.error('Erreur lors   de  la modification  de  l\'annonce:', error); 
+        //   ... (code   pour   afficher   un   message   d'erreur   à l'utilisateur) ...  
+    }
+});
+
+// ... (Reste   de   votre   code JavaScript) 
+
 document.getElementById('editUserForm').addEventListener('submit', (event) => {
     event.preventDefault(); // Prevents default form submit
     const form = event.target;
@@ -704,9 +721,6 @@ function updateOrderChart(orderDatat) {
 
     const dates = orderDatat.map(item => {
         let formattedDate = new Date(item.created_at__date); // Use the JS `Date` constructor
-        //  You can still use moment to format this date object further if you wish!
-        //  Example (you will probably not need this as it was the default output of `DateTimeField`) 
-        //  const datePart = moment(formattedDate).format('DD/MM'); // Use this only if needed to format 
         return formattedDate;
     });
 

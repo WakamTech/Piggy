@@ -4,7 +4,8 @@ from .views import (
     UserListView, UserUpdateView, UserRetrieveView, UserDeleteView, UserAdsListView,  UserOrdersListView, 
     AdListView, AdValidateView, AdDeleteView, get_butchery_ads,UserOrderListView, UserOrderDetailView, 
     OrderListView, OrderUpdateView, PriceRuleListView, OrderDeleteView, UserNotificationsView, save_fcm_token, update_order_status,
-    get_stats, get_configs, delete_ad, add_to_cart, get_user_cart, CurrentUserView, get_nearby_farmers_ads, get_nearby_buyers_ads, PriceRuleDeleteView, add_promotion_image_url, get_promotion_images
+    get_stats, get_configs, delete_ad, add_to_cart, get_user_cart, CurrentUserView, get_nearby_farmers_ads, get_nearby_buyers_ads, 
+    PriceRuleDeleteView, add_promotion_image_url, get_promotion_images, send_update_notification
 )
 
 urlpatterns = [
@@ -64,5 +65,6 @@ urlpatterns = [
     path('admin/promotion_images/add/', add_promotion_image_url, name='add-promotion-image'),
     path('admin/upload_promotion_image/', views.upload_promotion_image, name='upload_promotion_image'),
     path('admin/configs/cloudinary', views.update_cloudinary_config, name='update-cloudinary-config'), 
-    path('admin/upload_promotion_image/', views.upload_promotion_image, name='upload_promotion_image'),  # for
+    path('admin/upload_promotion_image/', views.upload_promotion_image, name='upload_promotion_image'),
+    path('send-update-notification/', send_update_notification, name='send_update_notification'),
 ]
