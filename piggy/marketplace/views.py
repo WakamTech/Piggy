@@ -646,6 +646,7 @@ def get_stats(request):
     )['total_revenue']
 
      # Calculate the current revenue based on 'accepted' orders 
+    current_revenue  = 0 
     current_revenue = Order.objects.filter(status='accepted').aggregate(
         total_current_revenue=Sum(F('quantity') * F('ad__price_per_kg')) 
     )['total_current_revenue']

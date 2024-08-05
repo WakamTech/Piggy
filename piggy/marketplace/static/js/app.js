@@ -403,7 +403,7 @@ function updateDashboardStats(data) {
     totalAdsElement.textContent = data.total_ads;
     totalOrdersElement.textContent = data.total_orders;
     totalRevenueElement.textContent = data.current_revenue ? data.current_revenue.toFixed(2) : '0.00'; // Affiche le revenu avec 2 décimales
-    totalManagerRevenueElement.textContent = data.manager_revenue ? data.current_revenue.toFixed(2) : '0.00'; // Affiche le revenu avec 2 décimales
+    totalManagerRevenueElement.textContent = data.manager_revenue ? data.manager_revenue.toFixed(2) : '0.00'; // Affiche le revenu avec 2 décimales
     userRoles = data.user_roles
     //console.log(data.orders_evolution)
     orderDatat = data.orders_evolution
